@@ -19,7 +19,7 @@ export const writeToFIle = (table, data) => {
 };
 
 export const readFromFile = async (table) => {
-  const filePath = path.join(__dirname, '..', `${table}.json`);
+  const filePath = path.join(__dirname, '..', 'data', `${table}.json`);
   let data = '';
   if (!fs.existsSync(filePath)) {
     await writeToFIle(table, '[]');
@@ -35,7 +35,7 @@ export const readFromFile = async (table) => {
 };
 
 export const deleteFile = (table) => {
-  const filePath = path.join(__dirname, '..', `${table}.json`);
+  const filePath = path.join(__dirname, '..', 'data', `${table}.json`);
   return new Promise(async (resolve, reject) => {
     try {
       fs.unlinkSync(filePath);
@@ -51,13 +51,14 @@ export const deleteFile = (table) => {
 
 export const lastIdStore = async (table, id) => {
   const idTracker = await readFromFile('tableIdTracker');
+  const tablePropName = pathTransformToCamelCase(table);
   if (id === 0) {
-    delete idTracker[table];
+    delete idTracker[tablePropName];
     const newIdTracker = { ...idTracker };
     await writeToFIle('tableIdTracker', JSON.stringify(newIdTracker));
     return;
   }
-  const newIdTracker = { ...idTracker, ...{ [pathTransformToCamelCase(table)]: id } };
+  const newIdTracker = { ...idTracker, ...{ [tablePropName]: id } };
   await writeToFIle('tableIdTracker', JSON.stringify(newIdTracker));
 };
 

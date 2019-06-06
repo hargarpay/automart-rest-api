@@ -77,13 +77,14 @@ export const save = async (table, payload) => {
     .then(() => newPayload);
 };
 
+
 export const saveMany = async (table, payloads) => {
   if (!Array.isArray(payloads)) throw new Error('Only array are acceted');
   const data = await readFromFile(table);
   const id = await getLastId(table);
-  let newId;
+  let newId = id;
   payloads.forEach((payload) => {
-    newId = id + 1;
+    newId += 1;
     data.push({ ...payload, ...{ id: newId } });
   });
   await storeLastId(table, newId);
@@ -130,6 +131,18 @@ export const findById = (table, recordId) => readFromFile(table)
     const record = data.find(datum => datum.id === recordId);
     return record;
   });
+
+export const findFirst = async (table) => {
+  const data = await findAll(table);
+  const first = data.shift();
+  return first;
+};
+
+export const findLast = async (table) => {
+  const data = await findAll(table);
+  const last = data.pop();
+  return last;
+};
 
 // export const createTable = (db) => {
 //   new
