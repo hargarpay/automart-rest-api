@@ -1,0 +1,12 @@
+
+# Enviroment Variable
+.env
+
+# Remove package lock file
+package-lock.json
+
+# Remove VS Code environment set up
+.vscode
+
+# Remove Node Modules
+node_modules

@@ -1,0 +1,43 @@
+{
+  "name": "am-rest-api",
+  "version": "1.0.0",
+  "description": "This is an api that deals with selling of auto mobiles.",
+  "main": "index.js",
+  "scripts": {
+    "start:dev": "DEBUG=automart:* nodemon --exec babel-node -r node_modules/dotenv/config server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hargarpay/automart-rest-api.git"
+  },
+  "keywords": [],
+  "author": "Ifeoluwa Odewale <ifeoluwa.odewale@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hargarpay/automart-rest-api/issues"
+  },
+  "homepage": "https://github.com/hargarpay/automart-rest-api#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.5",
+    "@babel/node": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
+    "@babel/register": "^7.4.4",
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.17.3",
+    "nodemon": "^1.19.1"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "cloudinary": "^1.14.0",
+    "cors": "^2.8.5",
+    "debug": "^4.1.1",
+    "dotenv": "^8.0.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "morgan": "^1.9.1"
+  }
+}
