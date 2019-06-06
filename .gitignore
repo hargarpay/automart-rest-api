@@ -13,6 +13,4 @@ node_modules
 
 # Remove all files from database/data but push the data folder
 # Since the file system database will use it
-src/database/data
-!src/database/data/.gitkeep
-!src/database/data/test/.gitkeep
+src/database/**/*.json
