@@ -34,7 +34,7 @@ export const register = async (req, res) => {
     return res.status(501)
       .send({
         success: false,
-        message: 'There was an error creating user',
+        message: `There was an error creating user ${error}`,
       });
   }
 };
