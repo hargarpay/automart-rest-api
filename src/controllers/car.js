@@ -25,8 +25,27 @@ export const create = async (req, res) => {
   } catch (err) {
     return res.status(501)
       .send({
-        status: false,
+        success: false,
         message: 'Error creating car',
+      });
+  }
+};
+
+export const update = async (req, res) => {
+  try {
+    const { params, body } = req;
+    const carId = parseInt(params.id, 10);
+    const payload = { ...body };
+    const record = await db.update(table, payload, carId);
+    return res.status(200).send({
+      success: true,
+      payload: record,
+    });
+  } catch (err) {
+    return res.status(501)
+      .send({
+        sucess: false,
+        message: 'Error updating car',
       });
   }
 };
