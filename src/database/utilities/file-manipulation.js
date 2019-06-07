@@ -3,13 +3,13 @@ import path from 'path';
 // import debug from 'debug';
 
 // const fileDebugger = debug('automart:file');
-
+const testPath = process.env.NODE_ENV === 'test' ? 'test' : '';
 export const pathTransformToCamelCase = filePath => filePath
   .replace(/(\\|\/)(.|)/g, c => c.toUpperCase())
   .replace(/[^a-zA-Z]/g, '');
 
 export const writeToFIle = (table, data) => {
-  const filePath = path.join(__dirname, '..', 'data', `${table}.json`);
+  const filePath = path.join(__dirname, '..', 'data', testPath, `${table}.json`);
   const writeStream = fs.createWriteStream(filePath, { encoding: 'utf-8', flag: 'w' });
   return new Promise((resolve) => {
     writeStream.write(data);
@@ -19,7 +19,7 @@ export const writeToFIle = (table, data) => {
 };
 
 export const readFromFile = async (table) => {
-  const filePath = path.join(__dirname, '..', 'data', `${table}.json`);
+  const filePath = path.join(__dirname, '..', 'data', testPath, `${table}.json`);
   let data = '';
   if (!fs.existsSync(filePath)) {
     await writeToFIle(table, '[]');
@@ -35,7 +35,7 @@ export const readFromFile = async (table) => {
 };
 
 export const deleteFile = (table) => {
-  const filePath = path.join(__dirname, '..', 'data', `${table}.json`);
+  const filePath = path.join(__dirname, '..', 'data', testPath, `${table}.json`);
   return new Promise(async (resolve, reject) => {
     try {
       fs.unlinkSync(filePath);
