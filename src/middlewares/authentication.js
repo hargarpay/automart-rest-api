@@ -23,7 +23,29 @@ export const verifyToken = (req, res, next) => {
 export const verifyAdmin = async (req, res, next) => {
   const { userId } = req;
   const data = await db.findById(table, userId);
-  if (typeof data !== 'object') return res.status(404).send({ success: false, message: 'Invalid Token' });
+  if (typeof data !== 'object') return res.status(404).send({ success: false, message: 'User not found' });
   if (data.is_admin !== true) return res.status(403).send({ success: false, message: 'You are not authorized' });
+  return next();
+};
+
+export const verifyPublished = async (req, res, next) => {
+  const { id } = req.params;
+
+  const car = await db.findById('cars', +id);
+
+  if (!car) return res.status(404).send({ success: false, message: 'Car advert not found' });
+
+  req.payload = { ...car };
+  if (!car.published) return next('route');
+  return next();
+};
+
+export const verifySeller = async (req, res, next) => {
+  const { payload, userId } = req;
+
+  const { owner } = payload;
+
+  if (+owner !== +userId) return next('route');
+
   return next();
 };

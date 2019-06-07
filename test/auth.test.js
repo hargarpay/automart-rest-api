@@ -68,14 +68,15 @@ describe('User Authentication API Routes', () => {
 });
 
 describe('Car advertisement API Routes', () => {
-  let newToken;
+  let adminToken;
+  let sellerToken;
   before(async () => {
     await db.clear('cars');
 
     await db.saveMany('cars',
       [
         {
-          owner: 1,
+          owner: 2,
           created_on: new Date(),
           manufacturer: 'Toyota',
           model: '4Runner',
@@ -83,10 +84,10 @@ describe('Car advertisement API Routes', () => {
           state: 'used',
           status: 'available',
           body_type: 'car',
-          published: false,
+          published: true,
         },
         {
-          owner: 1,
+          owner: 3,
           created_on: new Date(),
           manufacturer: 'Toyota',
           model: 'Corolla',
@@ -97,7 +98,7 @@ describe('Car advertisement API Routes', () => {
           published: false,
         },
         {
-          owner: 1,
+          owner: 3,
           created_on: new Date(),
           manufacturer: 'Lexus',
           model: 'MX',
@@ -105,10 +106,10 @@ describe('Car advertisement API Routes', () => {
           state: 'new',
           status: 'available',
           body_type: 'car',
-          published: true,
+          published: false,
         },
         {
-          owner: 1,
+          owner: 2,
           created_on: new Date(),
           manufacturer: 'Ford',
           model: 'EcoSport',
@@ -120,6 +121,7 @@ describe('Car advertisement API Routes', () => {
         },
       ]);
 
+    // Admin User
     const res = await request.post('/api/v1/auth/signin')
       .send({
         email: 'test1@automart.com',
@@ -127,7 +129,16 @@ describe('Car advertisement API Routes', () => {
       })
       .set('accept', 'json');
     const { payload } = res.body;
-    newToken = payload.token;
+    adminToken = payload.token;
+
+    // User
+    const res2 = await request.post('/api/v1/auth/signin')
+      .send({
+        email: 'test2@automart.com',
+        password: 'secret',
+      })
+      .set('accept', 'json');
+    sellerToken = res2.body.payload.token;
   });
 
   describe('POST /car', () => {
@@ -140,7 +151,7 @@ describe('Car advertisement API Routes', () => {
           state: 'new',
           body_type: 'car',
         })
-        .set('x-access-token', `Bearer ${newToken}`)
+        .set('x-access-token', `Bearer ${sellerToken}`)
         .set('accept', 'json')
         .expect(200);
 
@@ -159,7 +170,7 @@ describe('Car advertisement API Routes', () => {
           state: 'old',
           body_type: 'car',
         })
-        .set('x-access-token', `Bearer ${newToken}`)
+        .set('x-access-token', `Bearer ${sellerToken}`)
         .set('accept', 'json')
         .expect(200);
 
@@ -167,11 +178,22 @@ describe('Car advertisement API Routes', () => {
       assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
     });
   });
+  /**
+   * Admin can view filtered cars created by all sellers
+   * Seller can view filtered cars created by them
+   * Buyer can view filtered cars published by all sellers
+   */
+
+  /**
+   * Admin can view all cars created by all sellers
+   * Seller can view all cars created by them
+   * Buyer can view all cars published by all sellers
+   */
 
   describe('GET /cars', () => {
     it('View all car advertisement by admin', async () => {
       const res = await request.get('/api/v1/cars')
-        .set('x-access-token', `Bearer ${newToken}`)
+        .set('x-access-token', `Bearer ${adminToken}`)
         .set('accept', 'json')
         .expect(200);
 
@@ -183,7 +205,7 @@ describe('Car advertisement API Routes', () => {
   describe('GET /seller/cars', () => {
     it('View all car advertisement by sellers', async () => {
       const res = await request.get('/api/v1/seller/cars')
-        .set('x-access-token', `Bearer ${newToken}`)
+        .set('x-access-token', `Bearer ${sellerToken}`)
         .set('accept', 'json')
         .expect(200);
 
@@ -203,10 +225,102 @@ describe('Car advertisement API Routes', () => {
     });
   });
 
+  /**
+   * Buyer can only view published car advert
+   * Seller can view car created by themselves
+   * Admin can view car advert created by any seller
+   */
+
+  describe('GET /car/1', () => {
+    it('View published car advertisement by a buyer', async () => {
+      const res = await request.get('/api/v1/car/1')
+        .set('accept', 'json')
+        .expect(200);
+
+      const { success, payload } = res.body;
+      assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
+    });
+  });
+
+  describe('GET /car/5', () => {
+    it('View unpublished car advertisement by buyer', async () => {
+      const res = await request.get('/api/v1/car/5')
+        .set('accept', 'json')
+        .expect(403);
+
+      const { success, message } = res.body;
+      assert.deepStrictEqual([false, 'string'], [success, typeof message]);
+    });
+  });
+
+  describe('GET /car/5', () => {
+    it('Seller view car advertisement created by the  seller', async () => {
+      const res = await request.get('/api/v1/car/5')
+        .set('x-access-token', `Bearer ${sellerToken}`)
+        .set('accept', 'json')
+        .expect(200);
+
+      const { success, payload } = res.body;
+      assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
+    });
+  });
+
+  describe('GET /car/3', () => {
+    it('Seller view car advertisement created by the other seller', async () => {
+      const res = await request.get('/api/v1/car/3')
+        .set('x-access-token', `Bearer ${sellerToken}`)
+        .set('accept', 'json')
+        .expect(403);
+
+      const { success, message } = res.body;
+      assert.deepStrictEqual([false, 'string'], [success, typeof message]);
+    });
+  });
+
+  describe('GET /car/5', () => {
+    it('Admin view car advertisement created by any seller', async () => {
+      const res = await request.get('/api/v1/car/3')
+        .set('x-access-token', `Bearer ${adminToken}`)
+        .set('accept', 'json')
+        .expect(200);
+
+      const { success, payload } = res.body;
+      assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
+    });
+  });
+
+  /**
+   * Beginning of deleting car by admin and sellers unit testing
+   */
+
   describe('DELETE /car/1', () => {
-    it('Delete car advertisement', async () => {
+    it('Seller delete car advertisement created the seller', async () => {
       const res = await request.delete('/api/v1/car/1')
-        .set('x-access-token', `Bearer ${newToken}`)
+        .set('x-access-token', `Bearer ${sellerToken}`)
+        .set('accept', 'json')
+        .expect(200);
+
+      const { success, payload } = res.body;
+      assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
+    });
+  });
+
+  describe('DELETE /car/2', () => {
+    it('Seller delete car advertisement created by other seller', async () => {
+      const res = await request.delete('/api/v1/car/2')
+        .set('x-access-token', `Bearer ${sellerToken}`)
+        .set('accept', 'json')
+        .expect(403);
+
+      const { success, message } = res.body;
+      assert.deepStrictEqual([false, 'string'], [success, typeof message]);
+    });
+  });
+
+  describe('DELETE /car/3', () => {
+    it('Admin delete car advertisement', async () => {
+      const res = await request.delete('/api/v1/car/2')
+        .set('x-access-token', `Bearer ${adminToken}`)
         .set('accept', 'json')
         .expect(200);
 
