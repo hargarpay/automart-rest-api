@@ -4,7 +4,64 @@ import * as db from '../database/utilities/db-methods';
 // const carDebug = debug('automart:car');
 const table = 'cars';
 
-export const getCars = async () => {};
+export const getCar = async () => {};
+
+const filterQuery = (req) => {
+  const { query } = req;
+  const queryFeilds = {
+    status: ['eq', 'status'],
+    max_price: ['lte', 'price'],
+    min_price: ['gte', 'price'],
+    state: ['eq', 'state'],
+    manufacturer: ['contain', 'manufacturer'],
+    body_type: ['eq', 'body_type'],
+  };
+
+
+  return Object.keys(query).map((field) => {
+    const eachField = queryFeilds[field];
+    const [operation, column] = eachField;
+    return {
+      key: column,
+      value: query[column],
+      operation,
+    };
+  });
+};
+
+const getRecords = async filter => (
+  filter.length > 0 ? db.findByFilter(table, filter) : db.findAll(table)
+);
+
+export const getCars = async (req, res) => {
+  let records = [];
+  let filter = filterQuery(req);
+
+  filter = filter.concat({
+    key: 'owner',
+    value: req.userId,
+    operation: 'eq',
+  });
+
+  records = await getRecords(filter);
+
+  res.status(200).send({
+    success: true,
+    payload: records,
+  });
+};
+
+export const getCarsByAdmin = async (req, res) => {
+  let records = [];
+  const filter = filterQuery(req);
+
+  records = await getRecords(filter);
+
+  res.status(200).send({
+    success: true,
+    payload: records,
+  });
+};
 
 export const create = async (req, res) => {
   // await db.clear(table);

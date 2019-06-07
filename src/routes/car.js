@@ -1,6 +1,6 @@
 import express from 'express';
 import {
-  create, update,
+  create, update, getCars,
 } from '../controllers/car';
 
 import { verifyToken } from '../middlewares/authentication';
@@ -8,6 +8,8 @@ import { verifyToken } from '../middlewares/authentication';
 const router = express.Router();
 
 router.use(verifyToken);
+
+router.get('/cars', getCars);
 
 router.post('/car', create);
 
