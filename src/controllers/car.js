@@ -4,7 +4,15 @@ import * as db from '../database/utilities/db-methods';
 // const carDebug = debug('automart:car');
 const table = 'cars';
 
-export const getCar = async () => {};
+export const getCar = async (req, res) => {
+  const { payload } = req;
+
+  return res.status(200)
+    .send({
+      success: true,
+      payload,
+    });
+};
 
 const filterQuery = (req) => {
   const { query } = req;
@@ -22,7 +30,7 @@ const filterQuery = (req) => {
     const [operation, column] = eachField;
     return ({
       key: column,
-      value: query[column],
+      value: query[field],
       operation,
     });
   });
@@ -125,7 +133,8 @@ export const remove = async (req, res) => {
     const carId = parseInt(params.id, 10);
     const user = await db.findById('users', req.userId);
     const car = await db.findById('cars', carId);
-    if (user.id !== car.owner || !user.is_admin) {
+
+    if (user.id !== car.owner && !user.is_admin) {
       return res.status(403).send({
         success: false,
         message: 'You are not authorized to perform this action',

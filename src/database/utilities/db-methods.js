@@ -15,21 +15,21 @@ const transformData = (data, key, initial) => (data[key] ? `${data[key]}`.toLowe
 
 const eqFnc = (data, datum, value) => (datum === `${value}`.toLowerCase() ? data : []);
 
-const neqFnc = (data, datum, value) => (datum !== `${value}`.toLowerCase() ? data : []);
+// const neqFnc = (data, datum, value) => (datum !== `${value}`.toLowerCase() ? data : []);
 
-const gtFnc = (data, key, value) => (data[key] > value ? data : []);
+// const gtFnc = (data, key, value) => (data[key] > +value ? data : []);
 
-const ltFnc = (data, key, value) => (data[key] < value ? data : []);
+// const ltFnc = (data, key, value) => (data[key] < +value ? data : []);
 
-const gteFnc = (data, key, value) => (data[key] >= value ? data : []);
+const gteFnc = (data, key, value) => (data[key] >= +value ? data : []);
 
-const lteFnc = (data, key, value) => (data[key] <= value ? data : []);
+const lteFnc = (data, key, value) => (data[key] <= +value ? data : []);
 
 const containFnc = (data, datum, value) => (datum.indexOf(`${value}`.toLowerCase()) > -1 ? data : []);
 
-const notContainFnc = (data, datum, value) => (
-  datum.indexOf(`${value}`.toLowerCase()) === -1 ? data : []
-);
+// const notContainFnc = (data, datum, value) => (
+//   datum.indexOf(`${value}`.toLowerCase()) === -1 ? data : []
+// );
 
 export const getFilteredRecord = (data, key, value, operator) => {
   let record;
@@ -39,16 +39,16 @@ export const getFilteredRecord = (data, key, value, operator) => {
       datum = transformData(data, key, null);
       record = eqFnc(data, datum, value);
       break;
-    case 'neq':
-      datum = transformData(data, key, null);
-      record = neqFnc(data, datum, value);
-      break;
-    case 'gt':
-      record = gtFnc(data, key, value);
-      break;
-    case 'lt':
-      record = ltFnc(data, key, value);
-      break;
+    // case 'neq':
+    //   datum = transformData(data, key, null);
+    //   record = neqFnc(data, datum, value);
+    //   break;
+    // case 'gt':
+    //   record = gtFnc(data, key, value);
+    //   break;
+    // case 'lt':
+    //   record = ltFnc(data, key, value);
+    //   break;
     case 'gte':
       record = gteFnc(data, key, value);
       break;
@@ -59,10 +59,10 @@ export const getFilteredRecord = (data, key, value, operator) => {
       datum = transformData(data, key, []);
       record = containFnc(data, datum, value);
       break;
-    case 'notContain':
-      datum = transformData(data, key, []);
-      record = notContainFnc(data, datum, value);
-      break;
+    // case 'notContain':
+    //   datum = transformData(data, key, []);
+    //   record = notContainFnc(data, datum, value);
+    //   break;
     default:
       record = [];
   }
