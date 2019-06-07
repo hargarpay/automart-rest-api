@@ -3,6 +3,7 @@ import {
   create, update, getCarsByAdmin,
   getCarsBySeller,
   getCarsByBuyer,
+  remove,
 } from '../controllers/car';
 
 import { verifyToken, verifyAdmin } from '../middlewares/authentication';
@@ -22,6 +23,9 @@ routerNoAuth.get('/buyer/cars', getCarsByBuyer);
 router.post('/car', create);
 
 router.put('/car/:id', update);
+
+router.delete('/car/:id', remove);
+
 
 routerNoAuth.use(router);
 
