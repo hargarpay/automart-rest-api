@@ -118,3 +118,31 @@ export const update = async (req, res) => {
       });
   }
 };
+
+export const remove = async (req, res) => {
+  try {
+    const { params } = req;
+    const carId = parseInt(params.id, 10);
+    const user = await db.findById('users', req.userId);
+    const car = await db.findById('cars', carId);
+    if (user.id !== car.owner || !user.is_admin) {
+      return res.status(403).send({
+        success: false,
+        message: 'You are not authorized to perform this action',
+      });
+    }
+    await db.remove(table, +req.params.id);
+    return res.status(200).send({
+      success: true,
+      payload: {
+        message: 'Successfully delete car advertisement',
+      },
+    });
+  } catch (err) {
+    return res.status(501)
+      .send({
+        sucess: false,
+        message: 'Error updating car',
+      });
+  }
+};

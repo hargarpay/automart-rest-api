@@ -202,4 +202,16 @@ describe('Car advertisement API Routes', () => {
       assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
     });
   });
+
+  describe('DELETE /car/1', () => {
+    it('Delete car advertisement', async () => {
+      const res = await request.delete('/api/v1/car/1')
+        .set('x-access-token', `Bearer ${newToken}`)
+        .set('accept', 'json')
+        .expect(200);
+
+      const { success, payload } = res.body;
+      assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
+    });
+  });
 });
