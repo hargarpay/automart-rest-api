@@ -17,15 +17,14 @@ const filterQuery = (req) => {
     body_type: ['eq', 'body_type'],
   };
 
-
   return Object.keys(query).map((field) => {
     const eachField = queryFeilds[field];
     const [operation, column] = eachField;
-    return {
+    return ({
       key: column,
       value: query[column],
       operation,
-    };
+    });
   });
 };
 

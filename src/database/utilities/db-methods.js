@@ -153,17 +153,17 @@ export const findById = (table, recordId) => readFromFile(table)
     return record;
   });
 
-export const findFirst = async (table) => {
-  const data = await findAll(table);
-  const first = data.shift();
-  return first;
-};
+// export const findFirst = async (table) => {
+//   const data = await findAll(table);
+//   const first = data.shift();
+//   return first;
+// };
 
-export const findLast = async (table) => {
-  const data = await findAll(table);
-  const last = data.pop();
-  return last;
-};
+// export const findLast = async (table) => {
+//   const data = await findAll(table);
+//   const last = data.pop();
+//   return last;
+// };
 
 // export const createTable = (db) => {
 //   new
