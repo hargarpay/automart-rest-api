@@ -8,7 +8,6 @@ const request = supertest(app);
 
 const bcryptSalt = +process.env.BCRYPT_SALT;
 
-
 describe('User Authentication API Routes', () => {
   before(async () => {
     await db.clear('test/users');
@@ -36,13 +35,28 @@ describe('User Authentication API Routes', () => {
 
   describe('POST /auth/signup', () => {
     it('create a user', async () => {
-      const res = await request.post('/api/v1/auth/signup?test=true')
+      const res = await request.post('/api/v1/auth/signup')
         .send({
           first_name: 'John',
           last_name: 'Smith',
           email: 'johnsmith@gmail.com',
           address: '31, Alagba street orile',
           password: 'john',
+        })
+        .set('accept', 'json')
+        .expect(200);
+
+      const { success, data } = res.body;
+      assert.deepStrictEqual([true, 'object'], [success, typeof data]);
+    });
+  });
+
+  describe('POST /auth/signin', () => {
+    it('sign in a user', async () => {
+      const res = await request.post('/api/v1/auth/signin')
+        .send({
+          email: 'test1@automart.com',
+          password: 'secret',
         })
         .set('accept', 'json')
         .expect(200);
