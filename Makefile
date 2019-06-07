@@ -4,5 +4,6 @@ test:
 	--require regenerator-runtime/runtime \
 	--require @babel/register \
 	-u bdd \
-	--reporter spec
+	--reporter spec \
+	--exit
 .PHONY: test
