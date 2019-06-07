@@ -5,7 +5,7 @@ import path from 'path';
 // const fileDebugger = debug('automart:file');
 const testPath = process.env.NODE_ENV === 'test' ? 'test' : '';
 export const pathTransformToCamelCase = filePath => filePath
-  .replace(/(\\|\/)(.|)/g, c => c.toUpperCase())
+  // .replace(/(\\|\/)(.|)/g, c => c.toUpperCase())
   .replace(/[^a-zA-Z]/g, '');
 
 export const writeToFIle = (table, data) => {
@@ -47,7 +47,6 @@ export const deleteFile = (table) => {
     }
   });
 };
-
 
 export const lastIdStore = async (table, id) => {
   const idTracker = await readFromFile('tableIdTracker');

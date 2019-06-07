@@ -9,6 +9,7 @@ const table = 'users';
 
 export const verifyToken = (req, res, next) => {
   const authorization = req.headers['x-access-token'];
+
   //   middlewareDebug(authorization);
   if (!/^Bearer\s+/.test(authorization)) return res.status(403).send({ success: false, message: 'Not authorized' });
   const token = authorization.replace(/^Bearer\s+/, '');

@@ -80,10 +80,10 @@ describe('Car advertisement API Routes', () => {
           created_on: new Date(),
           manufacturer: 'Toyota',
           model: '4Runner',
-          price: 120000.50,
+          price: 120000,
           state: 'used',
           status: 'available',
-          body_type: 'car',
+          body_type: 'truck',
           published: true,
         },
         {
@@ -116,7 +116,7 @@ describe('Car advertisement API Routes', () => {
           price: 150000.50,
           state: 'used',
           status: 'sold',
-          body_type: 'car',
+          body_type: 'truck',
           published: true,
         },
       ]);
@@ -167,7 +167,7 @@ describe('Car advertisement API Routes', () => {
           manufacturer: 'Ford',
           model: 'Expedition Max',
           price: 15000000,
-          state: 'old',
+          state: 'used',
           body_type: 'car',
         })
         .set('x-access-token', `Bearer ${sellerToken}`)
@@ -178,11 +178,71 @@ describe('Car advertisement API Routes', () => {
       assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
     });
   });
+
   /**
    * Admin can view filtered cars created by all sellers
    * Seller can view filtered cars created by them
    * Buyer can view filtered cars published by all sellers
    */
+  describe('GET /cars?status=available&state=new', () => {
+    it('View all car advertisement that are available and new by admin', async () => {
+      const res = await request.get('/api/v1/cars?status=available&state=new')
+        .set('x-access-token', `Bearer ${adminToken}`)
+        .set('accept', 'json')
+        .expect(200);
+
+      const { success, payload } = res.body;
+      assert.deepStrictEqual([true, 2], [success, payload.length]);
+    });
+  });
+
+  describe('GET /cars?status=available&state=used', () => {
+    it('View all car advertisement that are available and used by admin', async () => {
+      const res = await request.get('/api/v1/cars?status=available&state=used')
+        .set('x-access-token', `Bearer ${adminToken}`)
+        .set('accept', 'json')
+        .expect(200);
+
+      const { success, payload } = res.body;
+      assert.deepStrictEqual([true, 2], [success, payload.length]);
+    });
+  });
+
+  describe('GET /cars?status=available&manufacturer=ford', () => {
+    it('View all car advertisement whose manaufacturer is ford by admin', async () => {
+      const res = await request.get('/api/v1/cars?status=available&manufacturer=ford')
+        .set('x-access-token', `Bearer ${adminToken}`)
+        .set('accept', 'json')
+        .expect(200);
+
+      const { success, payload } = res.body;
+      assert.deepStrictEqual([true, 2], [success, payload.length]);
+    });
+  });
+
+  describe('GET /cars?body_type=car', () => {
+    it('View all car advertisement whose body type is car by admin', async () => {
+      const res = await request.get('/api/v1/cars?body_type=car')
+        .set('x-access-token', `Bearer ${adminToken}`)
+        .set('accept', 'json')
+        .expect(200);
+
+      const { success, payload } = res.body;
+      assert.deepStrictEqual([true, 4], [success, payload.length]);
+    });
+  });
+
+  describe('GET /cars?status=available&min_price=120000&max_price=20000000', () => {
+    it('View all car advertisement that are available and within the range of 120000 to 20000000 by admin', async () => {
+      const res = await request.get('/api/v1/cars?status=available&min_price=120000&max_price=20000000')
+        .set('x-access-token', `Bearer ${adminToken}`)
+        .set('accept', 'json')
+        .expect(200);
+
+      const { success, payload } = res.body;
+      assert.deepStrictEqual([true, 3], [success, payload.length]);
+    });
+  });
 
   /**
    * Admin can view all cars created by all sellers
@@ -226,9 +286,9 @@ describe('Car advertisement API Routes', () => {
   });
 
   /**
-   * Buyer can only view published car advert
-   * Seller can view car created by themselves
-   * Admin can view car advert created by any seller
+   * Buyer can only view specific published car advert
+   * Seller can view specific car created by themselves
+   * Admin can view specific car advert created by any seller
    */
 
   describe('GET /car/1', () => {
@@ -327,5 +387,9 @@ describe('Car advertisement API Routes', () => {
       const { success, payload } = res.body;
       assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
     });
+  });
+
+  after(async () => {
+    await db.drop('cars');
   });
 });

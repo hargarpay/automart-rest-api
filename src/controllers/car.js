@@ -30,7 +30,7 @@ const filterQuery = (req) => {
     const [operation, column] = eachField;
     return ({
       key: column,
-      value: query[column],
+      value: query[field],
       operation,
     });
   });
