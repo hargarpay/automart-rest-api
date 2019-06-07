@@ -29,12 +29,17 @@ const filterQuery = (req) => {
   });
 };
 
-const getRecords = async filter => (
-  filter.length > 0 ? db.findByFilter(table, filter) : db.findAll(table)
-);
+const getRecords = async (filter) => {
+  const records = filter.length > 0
+    ? await db.findByFilter(table, filter)
+    : await db.findAll(table);
+  return ({
+    success: true,
+    payload: records,
+  });
+};
 
-export const getCars = async (req, res) => {
-  let records = [];
+export const getCarsBySeller = async (req, res) => {
   let filter = filterQuery(req);
 
   filter = filter.concat({
@@ -43,24 +48,31 @@ export const getCars = async (req, res) => {
     operation: 'eq',
   });
 
-  records = await getRecords(filter);
+  const response = await getRecords(filter);
 
-  res.status(200).send({
-    success: true,
-    payload: records,
+  res.status(200).send(response);
+};
+
+export const getCarsByBuyer = async (req, res) => {
+  let filter = filterQuery(req);
+
+  filter = filter.concat({
+    key: 'published',
+    value: true,
+    operation: 'eq',
   });
+
+  const response = await getRecords(filter);
+
+  res.status(200).send(response);
 };
 
 export const getCarsByAdmin = async (req, res) => {
-  let records = [];
   const filter = filterQuery(req);
 
-  records = await getRecords(filter);
+  const response = await getRecords(filter);
 
-  res.status(200).send({
-    success: true,
-    payload: records,
-  });
+  res.status(200).send(response);
 };
 
 export const create = async (req, res) => {
@@ -73,6 +85,7 @@ export const create = async (req, res) => {
       ...{ created_on: createdOn },
       ...{ status: 'available' },
       ...{ owner: userId },
+      ...{ published: false },
     };
     const record = await db.save(table, payload);
     return res.status(200).send({

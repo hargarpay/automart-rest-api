@@ -18,7 +18,7 @@ describe('User Authentication API Routes', () => {
         last_name: 'test 1 last name',
         email: 'test1@automart.com',
         address: 'test 1 home address',
-        is_admin: false,
+        is_admin: true,
         password: bcrypt.hashSync('secret', bcrypt.genSaltSync(bcryptSalt)),
       },
       {
@@ -62,7 +62,6 @@ describe('User Authentication API Routes', () => {
         .expect(200);
 
       const { success, payload } = res.body;
-
       assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
     });
   });
@@ -84,6 +83,7 @@ describe('Car advertisement API Routes', () => {
           state: 'used',
           status: 'available',
           body_type: 'car',
+          published: false,
         },
         {
           owner: 1,
@@ -94,6 +94,7 @@ describe('Car advertisement API Routes', () => {
           state: 'used',
           status: 'available',
           body_type: 'car',
+          published: false,
         },
         {
           owner: 1,
@@ -104,6 +105,7 @@ describe('Car advertisement API Routes', () => {
           state: 'new',
           status: 'available',
           body_type: 'car',
+          published: true,
         },
         {
           owner: 1,
@@ -114,6 +116,7 @@ describe('Car advertisement API Routes', () => {
           state: 'used',
           status: 'sold',
           body_type: 'car',
+          published: true,
         },
       ]);
 
@@ -166,8 +169,20 @@ describe('Car advertisement API Routes', () => {
   });
 
   describe('GET /cars', () => {
-    it('View all car advertisement', async () => {
+    it('View all car advertisement by admin', async () => {
       const res = await request.get('/api/v1/cars')
+        .set('x-access-token', `Bearer ${newToken}`)
+        .set('accept', 'json')
+        .expect(200);
+
+      const { success, payload } = res.body;
+      assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
+    });
+  });
+
+  describe('GET /seller/cars', () => {
+    it('View all car advertisement by sellers', async () => {
+      const res = await request.get('/api/v1/seller/cars')
         .set('x-access-token', `Bearer ${newToken}`)
         .set('accept', 'json')
         .expect(200);
