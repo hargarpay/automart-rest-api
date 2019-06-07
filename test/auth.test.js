@@ -191,4 +191,15 @@ describe('Car advertisement API Routes', () => {
       assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
     });
   });
+
+  describe('GET /buyer/cars', () => {
+    it('View all car advertisement by buyers', async () => {
+      const res = await request.get('/api/v1/buyer/cars')
+        .set('accept', 'json')
+        .expect(200);
+
+      const { success, payload } = res.body;
+      assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
+    });
+  });
 });
