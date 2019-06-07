@@ -11,11 +11,11 @@ import {
 
 const dataDebug = debug('automart:data');
 
-const transformData = (data, key, initial) => (data[key] ? data[key].toLowerCase() : initial);
+const transformData = (data, key, initial) => (data[key] ? `${data[key]}`.toLowerCase() : initial);
 
-const eqFnc = (data, datum, value) => (datum === value.toLowerCase() ? data : []);
+const eqFnc = (data, datum, value) => (datum === `${value}`.toLowerCase() ? data : []);
 
-const neqFnc = (data, datum, value) => (datum !== value.toLowerCase() ? data : []);
+const neqFnc = (data, datum, value) => (datum !== `${value}`.toLowerCase() ? data : []);
 
 const gtFnc = (data, key, value) => (data[key] > value ? data : []);
 
@@ -25,10 +25,10 @@ const gteFnc = (data, key, value) => (data[key] >= value ? data : []);
 
 const lteFnc = (data, key, value) => (data[key] <= value ? data : []);
 
-const containFnc = (data, datum, value) => (datum.indexOf(value.toLowerCase()) > -1 ? data : []);
+const containFnc = (data, datum, value) => (datum.indexOf(`${value}`.toLowerCase()) > -1 ? data : []);
 
 const notContainFnc = (data, datum, value) => (
-  datum.indexOf(value.toLowerCase()) === -1 ? data : []
+  datum.indexOf(`${value}`.toLowerCase()) === -1 ? data : []
 );
 
 export const getFilteredRecord = (data, key, value, operator) => {

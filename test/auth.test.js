@@ -164,4 +164,16 @@ describe('Car advertisement API Routes', () => {
       assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
     });
   });
+
+  describe('GET /cars', () => {
+    it('View all car advertisement', async () => {
+      const res = await request.get('/api/v1/cars')
+        .set('x-access-token', `Bearer ${newToken}`)
+        .set('accept', 'json')
+        .expect(200);
+
+      const { success, payload } = res.body;
+      assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
+    });
+  });
 });
