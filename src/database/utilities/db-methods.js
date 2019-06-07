@@ -11,43 +11,64 @@ import {
 
 const dataDebug = debug('automart:data');
 
+const transformData = (data, key, initial) => (data[key] ? data[key].toLowerCase() : initial);
+
+const eqFnc = (data, datum, value) => (datum === value.toLowerCase() ? data : []);
+
+const neqFnc = (data, datum, value) => (datum !== value.toLowerCase() ? data : []);
+
+const gtFnc = (data, key, value) => (data[key] > value ? data : []);
+
+const ltFnc = (data, key, value) => (data[key] < value ? data : []);
+
+const gteFnc = (data, key, value) => (data[key] >= value ? data : []);
+
+const lteFnc = (data, key, value) => (data[key] <= value ? data : []);
+
+const containFnc = (data, datum, value) => (datum.indexOf(value.toLowerCase()) > -1 ? data : []);
+
+const notContainFnc = (data, datum, value) => (
+  datum.indexOf(value.toLowerCase()) === -1 ? data : []
+);
+
 export const getFilteredRecord = (data, key, value, operator) => {
   let record;
   let datum;
   switch (operator) {
     case 'eq':
-      datum = data[key] ? data[key].toLowerCase() : null;
-      record = datum === value.toLowerCase() ? data : [];
+      datum = transformData(data, key, null);
+      record = eqFnc(data, datum, value);
       break;
     case 'neq':
-      datum = data[key] ? data[key].toLowerCase() : null;
-      record = datum !== value.toLowerCase() ? data : [];
+      datum = transformData(data, key, null);
+      record = neqFnc(data, datum, value);
       break;
     case 'gt':
-      record = data[key] > value ? data : [];
+      record = gtFnc(data, key, value);
       break;
     case 'lt':
-      record = data[key] < value ? data : [];
+      record = ltFnc(data, key, value);
       break;
     case 'gte':
-      record = data[key] >= value ? data : [];
+      record = gteFnc(data, key, value);
       break;
     case 'lte':
-      record = data[key] <= value ? data : [];
+      record = lteFnc(data, key, value);
       break;
     case 'contain':
-      datum = data[key] ? data[key].toLowerCase() : [];
-      record = datum.indexOf(value.toLowerCase()) > -1 ? data : [];
+      datum = transformData(data, key, []);
+      record = containFnc(data, datum, value);
       break;
     case 'notContain':
-      datum = data[key] ? data[key].toLowerCase() : [];
-      record = datum.indexOf(value.toLowerCase()) === -1 ? data : [];
+      datum = transformData(data, key, []);
+      record = notContainFnc(data, datum, value);
       break;
     default:
       record = [];
   }
   return record;
 };
+
 
 export const storeLastId = async (table, id) => {
   await lastIdStore(table, id);
