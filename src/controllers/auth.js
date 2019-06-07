@@ -5,7 +5,7 @@ import * as db from '../database/utilities/db-methods';
 
 let table = 'users';
 const bcryptSalt = +process.env.BCRYPT_SALT;
-const jwtSalt = process.env.SECRET_KEY;
+const jwtSalt = process.env.SECRET_KEY || 'test';
 
 // const userDebug = debug('automart:user');
 
