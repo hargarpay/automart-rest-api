@@ -55,8 +55,8 @@ describe('User Authentication API Routes', () => {
     it('sign in a user', async () => {
       const res = await request.post('/api/v1/auth/signin')
         .send({
-          email: 'johnsmith@gmail.com',
-          password: 'john',
+          email: 'test1@automart.com',
+          password: 'secret',
         })
         .set('accept', 'json')
         .expect(200);
