@@ -145,4 +145,23 @@ describe('Car advertisement API Routes', () => {
       assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
     });
   });
+
+  describe('PUT /car/1', () => {
+    it('Update car advertisement with id 1', async () => {
+      const res = await request.put('/api/v1/car/1')
+        .send({
+          manufacturer: 'Ford',
+          model: 'Expedition Max',
+          price: 15000000,
+          state: 'old',
+          body_type: 'car',
+        })
+        .set('x-access-token', `Bearer ${newToken}`)
+        .set('accept', 'json')
+        .expect(200);
+
+      const { success, payload } = res.body;
+      assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
+    });
+  });
 });
