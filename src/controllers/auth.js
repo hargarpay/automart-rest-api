@@ -5,7 +5,7 @@ import * as db from '../database/utilities/db-methods';
 
 let table = 'users';
 const bcryptSalt = +process.env.BCRYPT_SALT;
-const jwtSalt = process.env.SECRET_KEY;
+const jwtSalt = process.env.SECRET_KEY || 'test';
 
 // const userDebug = debug('automart:user');
 
@@ -34,7 +34,7 @@ export const register = async (req, res) => {
     return res.status(501)
       .send({
         success: false,
-        message: 'There was an error creating user',
+        message: `There was an error creating user ${error}`,
       });
   }
 };
