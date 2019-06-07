@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 // import debug from 'debug';
 import * as db from '../database/utilities/db-methods';
 
-const table = process.env.NODE_ENV === 'test' ? 'test/users' : 'user';
+const table = 'users';
 const bcryptSalt = +process.env.BCRYPT_SALT;
 const jwtSalt = process.env.SECRET_KEY || 'test';
 
@@ -24,7 +24,7 @@ export const register = async (req, res) => {
     // userDebug(newPayload);
     return res.status(200).send({
       success: true,
-      data: newPayload,
+      payload: newPayload,
     });
   } catch (error) {
     // userDebug(error);
@@ -53,7 +53,7 @@ export const login = async (req, res) => {
     delete payload.password;
     return res.status(200).send({
       success: true,
-      data: payload,
+      payload,
     });
   } catch (err) {
     return res.status(200).send({

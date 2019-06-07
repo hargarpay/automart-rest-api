@@ -10,9 +10,9 @@ const bcryptSalt = +process.env.BCRYPT_SALT;
 
 describe('User Authentication API Routes', () => {
   before(async () => {
-    await db.clear('test/users');
+    await db.clear('users');
 
-    await db.saveMany('test/users', [
+    await db.saveMany('users', [
       {
         first_name: 'test 1 first name',
         last_name: 'test 1 last name',
@@ -46,8 +46,8 @@ describe('User Authentication API Routes', () => {
         .set('accept', 'json')
         .expect(200);
 
-      const { success, data } = res.body;
-      assert.deepStrictEqual([true, 'object'], [success, typeof data]);
+      const { success, payload } = res.body;
+      assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
     });
   });
 
@@ -61,8 +61,88 @@ describe('User Authentication API Routes', () => {
         .set('accept', 'json')
         .expect(200);
 
-      const { success, data } = res.body;
-      assert.deepStrictEqual([true, 'object'], [success, typeof data]);
+      const { success, payload } = res.body;
+
+      assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
+    });
+  });
+});
+
+describe('Car advertisement API Routes', () => {
+  let newToken;
+  before(async () => {
+    await db.clear('cars');
+
+    await db.saveMany('cars',
+      [
+        {
+          owner: 1,
+          created_on: new Date(),
+          manufacturer: 'Toyota',
+          model: '4Runner',
+          price: 120000.50,
+          state: 'used',
+          status: 'available',
+          body_type: 'car',
+        },
+        {
+          owner: 1,
+          created_on: new Date(),
+          manufacturer: 'Toyota',
+          model: 'Corolla',
+          price: 80000,
+          state: 'used',
+          status: 'available',
+          body_type: 'car',
+        },
+        {
+          owner: 1,
+          created_on: new Date(),
+          manufacturer: 'Lexus',
+          model: 'MX',
+          price: 220000,
+          state: 'new',
+          status: 'available',
+          body_type: 'car',
+        },
+        {
+          owner: 1,
+          created_on: new Date(),
+          manufacturer: 'Ford',
+          model: 'EcoSport',
+          price: 150000.50,
+          state: 'used',
+          status: 'sold',
+          body_type: 'car',
+        },
+      ]);
+
+    const res = await request.post('/api/v1/auth/signin')
+      .send({
+        email: 'test1@automart.com',
+        password: 'secret',
+      })
+      .set('accept', 'json');
+    const { payload } = res.body;
+    newToken = payload.token;
+  });
+
+  describe('POST /car', () => {
+    it('Create car advertisement', async () => {
+      const res = await request.post('/api/v1/car')
+        .send({
+          manufacturer: 'Ford',
+          model: 'Expedition',
+          price: 18000000,
+          state: 'new',
+          body_type: 'car',
+        })
+        .set('x-access-token', `Bearer ${newToken}`)
+        .set('accept', 'json')
+        .expect(200);
+
+      const { success, payload } = res.body;
+      assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
     });
   });
 });

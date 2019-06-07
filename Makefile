@@ -4,8 +4,6 @@ test:
 	--require regenerator-runtime/runtime \
 	--require @babel/register \
 	mocha \
-	-u bdd \
-	--reporter spec \
 	--exit \
 	&& ./node_modules/.bin/nyc report --reporter=text-lcov | coveralls
 
