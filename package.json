@@ -7,8 +7,9 @@
     "start:dev": "DEBUG=automart:* nodemon --exec babel-node -r node_modules/dotenv/config src/app",
     "test": "make test",
     "clean": "rm -rf build",
-    "build-babel": "babel -d ./build ./src -s",
-    "build": "npm run clean && npm run build-babel",
+    "db": "mkdir -p ./build/database/data/test",
+    "build-babel": "babel src --out-dir build",
+    "build": "npm run clean && npm run build-babel && npm run db",
     "start": "npm run build && node ./build/app.js"
   },
   "repository": {

@@ -5,7 +5,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import routes from './routes';
 
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
 
 // Set the debug namespace to automart
 const httpDebug = debug('automart:http');
