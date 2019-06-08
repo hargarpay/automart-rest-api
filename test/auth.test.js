@@ -458,12 +458,41 @@ describe('Make Purchase Order API', () => {
       assert.deepStrictEqual([false, 'string'], [success, typeof message]);
     });
   });
+
+  describe('PATCH /order/3/price', () => {
+    it('Buyer updating his or her purchase order', async () => {
+      const res = await request.patch('/api/v1/order/3/price')
+        .send({
+          price_offered: 76000,
+        })
+        .set('x-access-token', `Bearer ${buyerToken}`)
+        .set('accept', 'json')
+        .expect(200);
+
+      const { success, payload } = res.body;
+      assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
+    });
+  });
+
+  describe('PATCH /order/1/price', () => {
+    it('Buyer updating purchase order made by another buyer', async () => {
+      const res = await request.patch('/api/v1/order/1/price')
+        .send({
+          price_offered: 115000,
+        })
+        .set('x-access-token', `Bearer ${buyerToken}`)
+        .set('accept', 'json')
+        .expect(403);
+
+      const { success, message } = res.body;
+      assert.deepStrictEqual([false, 'string'], [success, typeof message]);
+    });
+  });
 });
 
 
 after(async () => {
   await db.drop('cars');
   await db.drop('users');
-  await db.drop('orders');
-  await db.drop('tableIdTracker');
+  // await db.drop('orders');
 });
