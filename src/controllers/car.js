@@ -162,14 +162,25 @@ const updateField = async (req, res, field) => {
   }
 };
 
-export const updatePrice = async (req, res) => {
+const updateFieldHandler = async (req, res, field) => {
   const { body } = req;
-  await updateField(req, res, { price: body.price });
+  await updateField(req, res, { [field]: body[field] });
+};
+
+export const updatePrice = async (req, res) => {
+  await updateFieldHandler(req, res, 'price');
 };
 
 export const updateStatus = async (req, res) => {
-  const { body } = req;
-  await updateField(req, res, { status: body.status });
+  await updateFieldHandler(req, res, 'status');
+};
+
+export const publish = async (req, res) => {
+  await updateField(req, res, { published: true });
+};
+
+export const draft = async (req, res) => {
+  await updateField(req, res, { published: false });
 };
 
 export const remove = async (req, res) => {

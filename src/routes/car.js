@@ -7,6 +7,8 @@ import {
   getCar,
   updatePrice,
   updateStatus,
+  publish,
+  draft,
 } from '../controllers/car';
 
 import {
@@ -39,6 +41,10 @@ routerAuth.post('/car', create);
 routerAuth.put('/car/:id', update);
 
 routerAuth.patch('/car/:id/price', updatePrice);
+
+routerAuth.patch('/car/:id/publish', publish);
+
+routerAuth.patch('/car/:id/draft', draft);
 
 routerAuth.patch('/car/:id/status', updateStatus);
 
