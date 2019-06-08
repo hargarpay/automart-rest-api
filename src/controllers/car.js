@@ -162,6 +162,33 @@ export const updatePrice = async (req, res) => {
   }
 };
 
+export const updateStatus = async (req, res) => {
+  try {
+    const { params, body } = req;
+    const carId = parseInt(params.id, 10);
+    const car = await db.findById(table, carId);
+    const user = await db.findById('users', req.userId);
+    if (user.id !== car.owner && !user.is_admin) {
+      return res.status(403).send({
+        success: false,
+        message: 'You are not authorized to perform this action',
+      });
+    }
+    const payload = { status: body.status };
+    const record = await db.update(table, payload, carId);
+    return res.status(200).send({
+      success: true,
+      payload: record,
+    });
+  } catch (err) {
+    return res.status(501)
+      .send({
+        sucess: false,
+        message: 'Error updating car',
+      });
+  }
+};
+
 export const remove = async (req, res) => {
   try {
     const { params } = req;
