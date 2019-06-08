@@ -5,6 +5,7 @@ import {
   getCarsByBuyer,
   remove,
   getCar,
+  updatePrice,
 } from '../controllers/car';
 
 import {
@@ -35,6 +36,8 @@ routerNoAuth.get('/buyer/cars', getCarsByBuyer);
 routerAuth.post('/car', create);
 
 routerAuth.put('/car/:id', update);
+
+routerAuth.patch('/car/:id/price', updatePrice);
 
 routerAuth.delete('/car/:id', remove);
 
