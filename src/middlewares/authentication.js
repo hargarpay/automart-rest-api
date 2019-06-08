@@ -50,3 +50,10 @@ export const verifySeller = async (req, res, next) => {
 
   return next();
 };
+
+export const localPrefix = async (req, res, next) => {
+  const user = db.findById(table, req.userId);
+  req.userImageTag = [user.username, 'admin'];
+  req.isAdmin = user.is_admin;
+  next();
+};
