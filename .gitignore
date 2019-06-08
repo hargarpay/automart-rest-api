@@ -17,3 +17,6 @@ src/database/**/*.json
 
 # Hide NYC Output
 .nyc_output
+
+# Build 
+build
