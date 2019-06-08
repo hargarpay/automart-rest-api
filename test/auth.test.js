@@ -350,6 +350,54 @@ describe('Car advertisement API Routes', () => {
     });
   });
 
+  describe('PATCH /car/1/draft', () => {
+    it('Draft car advertisement by the seller', async () => {
+      const res = await request.patch('/api/v1/car/1/draft')
+        .set('x-access-token', `Bearer ${sellerToken}`)
+        .set('accept', 'json')
+        .expect(200);
+
+      const { success, payload } = res.body;
+      assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
+    });
+  });
+
+  describe('PATCH /car/2/draft', () => {
+    it('Seller draft car advertisement by another seller', async () => {
+      const res = await request.patch('/api/v1/car/2/draft')
+        .set('x-access-token', `Bearer ${sellerToken}`)
+        .set('accept', 'json')
+        .expect(403);
+
+      const { success, message } = res.body;
+      assert.deepStrictEqual([false, 'string'], [success, typeof message]);
+    });
+  });
+
+  describe('PATCH /car/1/publish', () => {
+    it('Publish car advertisement by the seller', async () => {
+      const res = await request.patch('/api/v1/car/1/publish')
+        .set('x-access-token', `Bearer ${sellerToken}`)
+        .set('accept', 'json')
+        .expect(200);
+
+      const { success, payload } = res.body;
+      assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
+    });
+  });
+
+  describe('PATCH /car/2/publish', () => {
+    it('Seller publish car advertisement by another seller', async () => {
+      const res = await request.patch('/api/v1/car/2/publish')
+        .set('x-access-token', `Bearer ${sellerToken}`)
+        .set('accept', 'json')
+        .expect(403);
+
+      const { success, message } = res.body;
+      assert.deepStrictEqual([false, 'string'], [success, typeof message]);
+    });
+  });
+
   /**
    * Buyer can only view specific published car advert
    * Seller can view specific car created by themselves
