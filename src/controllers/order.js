@@ -32,3 +32,30 @@ export const create = async (req, res) => {
       });
   }
 };
+
+export const updatePrice = async (req, res) => {
+  try {
+    const { params, body, userId } = req;
+    const orderId = parseInt(params.id, 10);
+    const order = await db.findById(table, orderId);
+
+    if (order.buyer !== userId) return res.status(403).send({ success: false, message: 'Buyer not authorized' });
+
+    const payload = {
+      price_offered: body.price_offered,
+      old_price_offered: order.price_offered,
+      new_price_offered: body.price_offered,
+    };
+    const record = await db.update(table, payload, orderId);
+    return res.status(200).send({
+      success: true,
+      payload: record,
+    });
+  } catch (err) {
+    return res.status(501)
+      .send({
+        success: false,
+        message: 'Error updating order price',
+      });
+  }
+};
