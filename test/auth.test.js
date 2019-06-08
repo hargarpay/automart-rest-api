@@ -598,6 +598,37 @@ describe('Make Purchase Order API', () => {
   });
 });
 
+describe('Flag car advertisement API', () => {
+  let buyerToken;
+  before(async () => {
+    // User
+    const res = await request.post('/api/v1/auth/signin')
+      .send({
+        email: 'test2@automart.com',
+        password: 'secret',
+      })
+      .set('accept', 'json');
+    buyerToken = res.body.payload.token;
+  });
+
+  describe('POST /flag', () => {
+    it('Buyer flag car AD as fraud', async () => {
+      const res = await request.post('/api/v1/flag')
+        .send({
+          reason: 'pricing',
+          car_id: 2,
+          description: 'The price of the car AD is very high',
+        })
+        .set('x-access-token', `Bearer ${buyerToken}`)
+        .set('accept', 'json')
+        .expect(200);
+
+      const { success, payload } = res.body;
+      assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
+    });
+  });
+});
+
 
 after(async () => {
   await db.drop('cars');
