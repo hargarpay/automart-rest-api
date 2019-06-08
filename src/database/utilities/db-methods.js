@@ -149,7 +149,7 @@ export const findAll = table => readFromFile(table)
 
 export const findById = (table, recordId) => readFromFile(table)
   .then((data) => {
-    const record = data.find(datum => datum.id === recordId);
+    const record = data.find(datum => datum.id === +recordId);
     return record;
   });
 
