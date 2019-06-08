@@ -112,7 +112,42 @@ export const update = async (req, res) => {
   try {
     const { params, body } = req;
     const carId = parseInt(params.id, 10);
+    const car = await db.findById(table, carId);
+    const user = await db.findById('users', req.userId);
+    if (user.id !== car.owner && !user.is_admin) {
+      return res.status(403).send({
+        success: false,
+        message: 'You are not authorized to perform this action',
+      });
+    }
     const payload = { ...body };
+    const record = await db.update(table, payload, carId);
+    return res.status(200).send({
+      success: true,
+      payload: record,
+    });
+  } catch (err) {
+    return res.status(501)
+      .send({
+        sucess: false,
+        message: 'Error updating car',
+      });
+  }
+};
+
+export const updatePrice = async (req, res) => {
+  try {
+    const { params, body } = req;
+    const carId = parseInt(params.id, 10);
+    const car = await db.findById(table, carId);
+    const user = await db.findById('users', req.userId);
+    if (user.id !== car.owner && !user.is_admin) {
+      return res.status(403).send({
+        success: false,
+        message: 'You are not authorized to perform this action',
+      });
+    }
+    const payload = { price: body.price };
     const record = await db.update(table, payload, carId);
     return res.status(200).send({
       success: true,
@@ -132,7 +167,7 @@ export const remove = async (req, res) => {
     const { params } = req;
     const carId = parseInt(params.id, 10);
     const user = await db.findById('users', req.userId);
-    const car = await db.findById('cars', carId);
+    const car = await db.findById(table, carId);
 
     if (user.id !== car.owner && !user.is_admin) {
       return res.status(403).send({
