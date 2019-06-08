@@ -8,16 +8,21 @@ const request = supertest(app);
 
 const bcryptSalt = +process.env.BCRYPT_SALT;
 
+before(async () => {
+  await db.clear('users');
+  await db.clear('cars');
+  await db.clear('orders');
+});
+
 describe('User Authentication API Routes', () => {
   before(async () => {
-    await db.clear('users');
-
     await db.saveMany('users', [
       {
         first_name: 'test 1 first name',
         last_name: 'test 1 last name',
         email: 'test1@automart.com',
         address: 'test 1 home address',
+        username: 'test1',
         is_admin: true,
         password: bcrypt.hashSync('secret', bcrypt.genSaltSync(bcryptSalt)),
       },
@@ -26,6 +31,7 @@ describe('User Authentication API Routes', () => {
         last_name: 'test 2 last name',
         email: 'test2@automart.com',
         address: 'test 2 home address',
+        username: 'test2',
         is_admin: false,
         password: bcrypt.hashSync('secret', bcrypt.genSaltSync(bcryptSalt)),
       },
@@ -41,6 +47,7 @@ describe('User Authentication API Routes', () => {
           last_name: 'Smith',
           email: 'johnsmith@gmail.com',
           address: '31, Alagba street orile',
+          username: 'johnsmith',
           password: 'john',
         })
         .set('accept', 'json')
@@ -71,8 +78,6 @@ describe('Car advertisement API Routes', () => {
   let adminToken;
   let sellerToken;
   before(async () => {
-    await db.clear('cars');
-
     await db.saveMany('cars',
       [
         {
@@ -95,7 +100,7 @@ describe('Car advertisement API Routes', () => {
           state: 'used',
           status: 'available',
           body_type: 'car',
-          published: false,
+          published: true,
         },
         {
           owner: 3,
@@ -353,9 +358,9 @@ describe('Car advertisement API Routes', () => {
    * Beginning of deleting car by admin and sellers unit testing
    */
 
-  describe('DELETE /car/1', () => {
+  describe('DELETE /car/5', () => {
     it('Seller delete car advertisement created the seller', async () => {
-      const res = await request.delete('/api/v1/car/1')
+      const res = await request.delete('/api/v1/car/5')
         .set('x-access-token', `Bearer ${sellerToken}`)
         .set('accept', 'json')
         .expect(200);
@@ -377,9 +382,9 @@ describe('Car advertisement API Routes', () => {
     });
   });
 
-  describe('DELETE /car/3', () => {
+  describe('DELETE /car/4', () => {
     it('Admin delete car advertisement', async () => {
-      const res = await request.delete('/api/v1/car/2')
+      const res = await request.delete('/api/v1/car/4')
         .set('x-access-token', `Bearer ${adminToken}`)
         .set('accept', 'json')
         .expect(200);
@@ -388,8 +393,77 @@ describe('Car advertisement API Routes', () => {
       assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
     });
   });
+});
 
-  after(async () => {
-    await db.drop('cars');
+describe('Make Purchase Order API', () => {
+  let buyerToken;
+  before(async () => {
+    await db.saveMany('orders', [
+      {
+        buyer: 1,
+        car_id: 1,
+        created_on: new Date(),
+        status: 'pending',
+        price: 120000,
+        price_offered: 100000,
+      },
+      {
+        buyer: 2,
+        car_id: 2,
+        created_on: new Date(),
+        status: 'pending',
+        price: 80000,
+        price_offered: 70000,
+      },
+    ]);
+
+    // User
+    const res = await request.post('/api/v1/auth/signin')
+      .send({
+        email: 'test2@automart.com',
+        password: 'secret',
+      })
+      .set('accept', 'json');
+    buyerToken = res.body.payload.token;
   });
+
+  describe('POST /order', () => {
+    it('Buyer make purchase order', async () => {
+      const res = await request.post('/api/v1/order')
+        .send({
+          price_offered: 75000,
+          car_id: 2,
+        })
+        .set('x-access-token', `Bearer ${buyerToken}`)
+        .set('accept', 'json')
+        .expect(200);
+
+      const { success, payload } = res.body;
+      assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
+    });
+  });
+
+  describe('POST /order', () => {
+    it('Seller cannot make other of the car advert he or she created', async () => {
+      const res = await request.post('/api/v1/order')
+        .send({
+          price_offered: 110000,
+          car_id: 1,
+        })
+        .set('x-access-token', `Bearer ${buyerToken}`)
+        .set('accept', 'json')
+        .expect(401);
+
+      const { success, message } = res.body;
+      assert.deepStrictEqual([false, 'string'], [success, typeof message]);
+    });
+  });
+});
+
+
+after(async () => {
+  await db.drop('cars');
+  await db.drop('users');
+  await db.drop('orders');
+  await db.drop('tableIdTracker');
 });
