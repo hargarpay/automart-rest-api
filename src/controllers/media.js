@@ -38,7 +38,7 @@ export const cloudinaryUpload = (req, res, base64Data, filepath) => {
     (error, result) => {
       mediaDebug(result, error);
       if (error) return res.status(404).json({ success: false, message: 'Unable to upload file to cloudinary' });
-      mediaDebug(result.url.replace(/v[0-9]+\//, ''));
+      //   mediaDebug(result.url.replace(/v[0-9]+\//, ''));
       return fs.unlink(`${filepath}.txt`, (er) => {
         if (er) return res.status(404).json({ success: false, message: 'Error Delete text file' });
         return res.status(200).json({ success: true, message: 'Uploading to cloudify' });
