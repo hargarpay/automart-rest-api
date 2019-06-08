@@ -2,7 +2,7 @@ import supertest from 'supertest';
 import assert from 'assert';
 import bcrypt from 'bcryptjs';
 import * as db from '../src/database/utilities/db-methods';
-import app from '../server';
+import app from '../src/app';
 
 const request = supertest(app);
 

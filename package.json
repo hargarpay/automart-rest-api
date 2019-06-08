@@ -4,7 +4,7 @@
   "description": "This is an api that deals with selling of auto mobiles.",
   "main": "index.js",
   "scripts": {
-    "start:dev": "DEBUG=automart:* nodemon --exec babel-node -r node_modules/dotenv/config server",
+    "start:dev": "DEBUG=automart:* nodemon --exec babel-node -r node_modules/dotenv/config src/app",
     "test": "make test"
   },
   "repository": {
