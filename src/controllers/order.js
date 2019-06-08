@@ -4,15 +4,23 @@ const table = 'orders';
 
 export const getOrder = () => {};
 
+const errorOccur = (userId, car) => {
+  if (!car) return [true, 404, { success: false, message: 'Record not found' }];
+  if (+car.owner === +userId) return [true, 401, { success: false, message: 'Seller can not make purchase of his car advert' }];
+  if (!car.published) return [true, 403, { success: false, message: 'Record not accessible' }];
+  return [false, 200, null];
+};
+
 export const create = async (req, res) => {
   try {
     const { userId, body } = req;
     const createdOn = new Date();
     const car = await db.findById('cars', body.car_id);
 
-    if (!car) return res.status(404).send({ success: false, message: 'Record not found' });
-    if (+car.owner === +userId) return res.status(401).send({ success: false, message: 'Seller can not make purchase of his car advert' });
-    if (!car.published) return res.status(403).send({ success: false, message: 'Record not accessible' });
+    const [hasError, status, message] = errorOccur(userId, car);
+
+    if (hasError) return res.status(status).send(message);
+
     const payload = {
       ...body,
       ...{ status: 'pending' },
