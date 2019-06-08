@@ -2,7 +2,7 @@ import * as db from '../database/utilities/db-methods';
 
 const table = 'flags';
 
-export const getFlag = () => {};
+export const getFlag = async () => {};
 
 export const create = async (req, res) => {
   try {
