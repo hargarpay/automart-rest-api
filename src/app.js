@@ -20,7 +20,7 @@ app.use(logger('dev'));
 app.use(cors());
 
 // Load static file for the api documentation
-app.use(express.static(path.join(__dirname, 'build')));
+app.use(express.static(path.join(__dirname, 'doc')));
 
 //  Parse incoming request data to create body property on request object
 app.use(bodyParser.urlencoded({ extended: false }));

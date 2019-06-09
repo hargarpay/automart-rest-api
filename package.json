@@ -6,12 +6,12 @@
   "scripts": {
     "start:dev": "DEBUG=automart:* nodemon --exec babel-node -r node_modules/dotenv/config src/app",
     "test": "make test",
-    "clean": "rm -rf dist",
-    "db": "mkdir -p ./dist/database/data/test && touch ./dist/database/data/tableIdTracker.json",
-    "api:doc": "cp -R src/build ./dist",
-    "build-babel": "babel src --out-dir dist",
-    "build": "npm run clean && npm run build-babel && npm run db",
-    "start": "npm run build && npm run api:doc && node ./dist/app.js"
+    "clean": "rm -rf build",
+    "db": "mkdir -p ./build/database/data/test && touch ./build/database/data/tableIdTracker.json",
+    "api:doc": "cp -R src/doc build",
+    "build-babel": "babel src --out-dir build",
+    "build": "npm run clean && npm run build-babel && npm run db && npm run api:doc",
+    "start": "npm run build && node ./build/app.js"
   },
   "repository": {
     "type": "git",
