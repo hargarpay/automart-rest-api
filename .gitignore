@@ -20,3 +20,5 @@ src/database/**/*.json
 
 # Build 
 build
+dist
+!src/build

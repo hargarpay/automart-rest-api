@@ -1,5 +1,6 @@
 import debug from 'debug';
 import express from 'express';
+import path from 'path';
 import logger from 'morgan';
 import bodyParser from 'body-parser';
 import cors from 'cors';
@@ -18,12 +19,21 @@ const app = express();
 app.use(logger('dev'));
 app.use(cors());
 
+// Load static file for the api documentation
+app.use(express.static(path.join(__dirname, 'build')));
+
 //  Parse incoming request data to create body property on request object
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // List all routes
 app.use('/api', routes);
+
+app.get('/', (req, res) => {
+  res.sendFile('index.html', {
+    root: path.join(__dirname, 'build'),
+  });
+});
 
 app.listen(port, () => httpDebug(`Server is runing on port ${port}. Go to http://localhost:${port}`));
 
