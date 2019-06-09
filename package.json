@@ -4,8 +4,14 @@
   "description": "This is an api that deals with selling of auto mobiles.",
   "main": "index.js",
   "scripts": {
-    "start:dev": "DEBUG=automart:* nodemon --exec babel-node -r node_modules/dotenv/config server",
-    "test": "make test"
+    "start:dev": "DEBUG=automart:* nodemon --exec babel-node -r node_modules/dotenv/config src/app",
+    "test": "make test",
+    "clean": "rm -rf build",
+    "db": "mkdir -p ./build/database/data/test && touch ./build/database/data/tableIdTracker.json",
+    "api:doc": "cp -R src/doc build",
+    "build-babel": "babel src --out-dir build",
+    "build": "npm run clean && npm run build-babel && npm run db && npm run api:doc",
+    "start": "npm run build && node ./build/app.js"
   },
   "repository": {
     "type": "git",
@@ -22,6 +28,7 @@
     "@babel/cli": "^7.4.4",
     "@babel/core": "^7.4.5",
     "@babel/node": "^7.4.5",
+    "@babel/plugin-transform-runtime": "^7.4.4",
     "@babel/preset-env": "^7.4.5",
     "@babel/register": "^7.4.4",
     "coveralls": "^3.0.4",
@@ -36,6 +43,7 @@
     "supertest": "^4.0.2"
   },
   "dependencies": {
+    "@babel/runtime": "^7.4.5",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "cloudinary": "^1.14.0",
