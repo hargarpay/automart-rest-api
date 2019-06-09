@@ -6,3 +6,8 @@ This is an api that deals with selling of auto mobiles.
 To start the server, follow the steps below
 - run `npm install` to install the app dependency
 - run `npm run start:dev` to start the server
+
+### [API DOCUMENTATION](https://young-ridge-93118.herokuapp.com)
+
+You can vist the [api documentation](https://young-ridge-93118.herokuapp.com) to read more about the route
+
