@@ -266,6 +266,14 @@
               </ul>
           </li>
           <li>
+            <a href="#report-flag-car-ad" class="toc-h1 toc-link" data-title="Report/Flag Car AD">Report/Flag Car AD</a>
+              <ul class="toc-list-h2">
+                  <li>
+                    <a href="#report-car-ad-as-fraud" class="toc-h2 toc-link" data-title="Report Car AD as Fraud">Report Car AD as Fraud</a>
+                  </li>
+              </ul>
+          </li>
+          <li>
             <a href="#errors" class="toc-h1 toc-link" data-title="Errors">Errors</a>
           </li>
       </ul>
@@ -394,6 +402,45 @@ For a seller to view all car AD created by the seller
 <p><code>GET /api/v1/buyer/car</code>
 <br>
 For a buyer to view all car AD published by any seller</p>
+<h3 id='query-parameters'>Query Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>state</td>
+<td>Enum</td>
+<td>State of the car AD [new, used]</td>
+</tr>
+<tr>
+<td>manufacturer</td>
+<td>String</td>
+<td>Manufacturer of the car AD</td>
+</tr>
+<tr>
+<td>model</td>
+<td>String</td>
+<td>Model of the car AD</td>
+</tr>
+<tr>
+<td>min_price</td>
+<td>String</td>
+<td>Car ADs whose price is more than this price</td>
+</tr>
+<tr>
+<td>max_price</td>
+<td>String</td>
+<td>Car ADs whose price is less than this price</td>
+</tr>
+<tr>
+<td>​body_type</td>
+<td>String</td>
+<td>Body type of the car AD car, truck, trailer, van, etc</td>
+</tr>
+</tbody></table>
 <pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
 </span><span class="s2">"success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
 </span><span class="s2">"payload"</span><span class="p">:[</span><span class="w">
@@ -780,7 +827,35 @@ For a buyer to view all car AD published by any seller</p>
   </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre><h1 id='errors'>Errors</h1>
+</span></code></pre><h1 id='report-flag-car-ad'>Report/Flag Car AD</h1><h2 id='report-car-ad-as-fraud'>Report Car AD as Fraud</h2>
+<p>Reporting Car AD as Fraud</p>
+<h3 id='http-request'>HTTP Request</h3>
+<p><code>POST /api/v1/flag</code></p>
+<h3 id='parameters'>Parameters</h3>
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>car_id</td>
+<td>Integer</td>
+<td>the ID of the car AD <code>Required</code></td>
+</tr>
+<tr>
+<td>reason</td>
+<td>Enum</td>
+<td>Reason to report the car AD as fraud [pricing, weird demands, etc] <code>Required</code></td>
+</tr>
+<tr>
+<td>​description</td>
+<td>String</td>
+<td>The description of the reason as fraud <code>Required</code></td>
+</tr>
+</tbody></table>
+<h1 id='errors'>Errors</h1>
 <aside class="notice">
 This error section is stored in a separate file in <code>includes/_errors.md</code>. Slate allows you to optionally separate out your docs into many files...just save them to the <code>includes</code> folder and add them to the top of your <code>index.md</code>'s frontmatter. Files are included in the order listed.
 </aside>
