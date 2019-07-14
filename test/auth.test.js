@@ -1,42 +1,62 @@
 import supertest from 'supertest';
 import assert from 'assert';
 import bcrypt from 'bcryptjs';
-import * as db from '../src/database/utilities/db-methods';
+// import * as db from '../src/database/utilities/db-methods';
 import app from '../src/app';
+import BaseModel from '../src/models/model';
 
 const request = supertest(app);
 
 const bcryptSalt = +process.env.BCRYPT_SALT;
 
+const password = bcrypt.hashSync('testing', bcrypt.genSaltSync(bcryptSalt));
+
+
 before(async () => {
-  await db.clear('users');
-  await db.clear('cars');
-  await db.clear('orders');
+  const carDB = new BaseModel('cars');
+  try {
+    await carDB.execSql('TRUNCATE TABLE public.flags CASCADE');
+    await carDB.execSql('ALTER SEQUENCE public.flags_id_seq RESTART WITH 1');
+    await carDB.execSql('TRUNCATE TABLE public.orders CASCADE');
+    await carDB.execSql('ALTER SEQUENCE public.orders_id_seq RESTART WITH 1');
+    await carDB.execSql('TRUNCATE TABLE public.cars CASCADE');
+    await carDB.execSql('ALTER SEQUENCE public.cars_id_seq RESTART WITH 1');
+    await carDB.execSql('TRUNCATE TABLE public.users CASCADE');
+    await carDB.execSql('ALTER SEQUENCE public.users_id_seq RESTART WITH 1');
+  } catch (err) {
+    console.log(err);
+  } finally {
+    await carDB.db.end();
+  }
 });
 
 describe('User Authentication API Routes', () => {
   before(async () => {
-    await db.saveMany('users', [
-      {
+    // done();
+    const userDB = new BaseModel('users');
+    try {
+      await userDB.save({
         first_name: 'test 1 first name',
         last_name: 'test 1 last name',
         email: 'test1@automart.com',
         address: 'test 1 home address',
-        username: 'test1',
         is_admin: true,
-        password: bcrypt.hashSync('secret', bcrypt.genSaltSync(bcryptSalt)),
-      },
-      {
+        password,
+      });
+
+      await userDB.save({
         first_name: 'test 2 first name',
         last_name: 'test 2 last name',
         email: 'test2@automart.com',
         address: 'test 2 home address',
-        username: 'test2',
         is_admin: false,
-        password: bcrypt.hashSync('secret', bcrypt.genSaltSync(bcryptSalt)),
-      },
-    ]);
-    // done();
+        password,
+      });
+    } catch (err) {
+      console.log(err);
+    } finally {
+      await userDB.db.end();
+    }
   });
 
   describe('POST /auth/signup', () => {
@@ -47,14 +67,14 @@ describe('User Authentication API Routes', () => {
           last_name: 'Smith',
           email: 'johnsmith@gmail.com',
           address: '31, Alagba street orile',
-          username: 'johnsmith',
-          password: 'john',
+          password: 'johnsmith',
+          compare_password: 'johnsmith',
         })
         .set('accept', 'json')
-        .expect(200);
+        .expect(201);
 
-      const { success, payload } = res.body;
-      assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
+      const { success, data } = res.body;
+      assert.deepStrictEqual([true, 'object'], [success, typeof data]);
     });
   });
 
@@ -63,13 +83,12 @@ describe('User Authentication API Routes', () => {
       const res = await request.post('/api/v1/auth/signin')
         .send({
           email: 'test1@automart.com',
-          password: 'secret',
+          password: 'testing',
         })
         .set('accept', 'json')
         .expect(200);
-
-      const { success, payload } = res.body;
-      assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
+      const { success, data } = res.body;
+      assert.deepStrictEqual([true, 'object'], [success, typeof data]);
     });
   });
 });
@@ -78,72 +97,72 @@ describe('Car advertisement API Routes', () => {
   let adminToken;
   let sellerToken;
   before(async () => {
-    await db.saveMany('cars',
-      [
-        {
-          owner: 2,
-          created_on: new Date(),
-          manufacturer: 'Toyota',
-          model: '4Runner',
-          price: 120000,
-          state: 'used',
-          status: 'available',
-          body_type: 'truck',
-          published: true,
-        },
-        {
-          owner: 3,
-          created_on: new Date(),
-          manufacturer: 'Toyota',
-          model: 'Corolla',
-          price: 80000,
-          state: 'used',
-          status: 'available',
-          body_type: 'car',
-          published: true,
-        },
-        {
-          owner: 3,
-          created_on: new Date(),
-          manufacturer: 'Lexus',
-          model: 'MX',
-          price: 220000,
-          state: 'new',
-          status: 'available',
-          body_type: 'car',
-          published: false,
-        },
-        {
-          owner: 2,
-          created_on: new Date(),
-          manufacturer: 'Ford',
-          model: 'EcoSport',
-          price: 150000.50,
-          state: 'used',
-          status: 'sold',
-          body_type: 'truck',
-          published: true,
-        },
-      ]);
+    const carDB = new BaseModel('cars');
+    try {
+      await carDB.save({
+        owner: 2,
+        manufacturer: 'Toyota',
+        model: '4Runner',
+        price: 120000,
+        state: 'used',
+        status: 'available',
+        body_type: 'truck',
+        published: true,
+      });
+      await carDB.save({
+        owner: 3,
+        manufacturer: 'Toyota',
+        model: 'Corolla',
+        price: 80000,
+        state: 'used',
+        status: 'available',
+        body_type: 'car',
+        published: true,
+      });
+      await carDB.save({
+        owner: 3,
+        manufacturer: 'Lexus',
+        model: 'MX',
+        price: 220000,
+        state: 'new',
+        status: 'available',
+        body_type: 'car',
+        published: false,
+      });
+      await carDB.save({
+        owner: 2,
+        manufacturer: 'Ford',
+        model: 'EcoSport',
+        price: 150000,
+        state: 'used',
+        status: 'sold',
+        body_type: 'truck',
+        published: true,
+      });
+    } catch (err) {
+      console.log(err);
+    } finally {
+      carDB.db.end();
+    }
 
     // Admin User
     const res = await request.post('/api/v1/auth/signin')
       .send({
         email: 'test1@automart.com',
-        password: 'secret',
+        password: 'testing',
       })
       .set('accept', 'json');
-    const { payload } = res.body;
-    adminToken = payload.token;
+    const { data } = res.body;
+    adminToken = data.token;
 
     // User
     const res2 = await request.post('/api/v1/auth/signin')
       .send({
         email: 'test2@automart.com',
-        password: 'secret',
+        password: 'testing',
       })
       .set('accept', 'json');
-    sellerToken = res2.body.payload.token;
+    sellerToken = res2.body.data.token;
   });
 
   describe('POST /car', () => {
@@ -155,13 +174,14 @@ describe('Car advertisement API Routes', () => {
           price: 18000000,
           state: 'new',
           body_type: 'car',
+          published: false,
         })
-        .set('x-access-token', `Bearer ${sellerToken}`)
+        .set('Authorization', `Bearer ${sellerToken}`)
         .set('accept', 'json')
-        .expect(200);
+        .expect(201);
 
-      const { success, payload } = res.body;
-      assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
+      const { success, data } = res.body;
+      assert.deepStrictEqual([true, 'object'], [success, typeof data]);
     });
   });
 
@@ -170,63 +190,63 @@ describe('Car advertisement API Routes', () => {
    * Seller can view filtered cars created by them
    * Buyer can view filtered cars published by all sellers
    */
-  describe('GET /cars?status=available&state=new', () => {
-    it('View all car advertisement that are available and new by admin', async () => {
-      const res = await request.get('/api/v1/cars?status=available&state=new')
-        .set('x-access-token', `Bearer ${adminToken}`)
+  describe('GET /car?status=available&state=new', () => {
+    it('View all car advertisement that are available and new by seller', async () => {
+      const res = await request.get('/api/v1/car?status=available&state=new')
+        .set('Authorization', `Bearer ${sellerToken}`)
         .set('accept', 'json')
         .expect(200);
 
-      const { success, payload } = res.body;
-      assert.deepStrictEqual([true, 2], [success, payload.length]);
+      const { success, data } = res.body;
+      assert.deepStrictEqual([true, 1], [success, data.length]);
     });
   });
 
-  describe('GET /cars?status=available&state=used', () => {
-    it('View all car advertisement that are available and used by admin', async () => {
-      const res = await request.get('/api/v1/cars?status=available&state=used')
-        .set('x-access-token', `Bearer ${adminToken}`)
+  describe('GET /car?status=available&state=used', () => {
+    it('View all car advertisement that are available and used by seller', async () => {
+      const res = await request.get('/api/v1/car?status=available&state=used')
+        .set('Authorization', `Bearer ${sellerToken}`)
         .set('accept', 'json')
         .expect(200);
 
-      const { success, payload } = res.body;
-      assert.deepStrictEqual([true, 2], [success, payload.length]);
+      const { success, data } = res.body;
+      assert.deepStrictEqual([true, 1], [success, data.length]);
     });
   });
 
-  describe('GET /cars?status=available&manufacturer=ford', () => {
-    it('View all car advertisement whose manaufacturer is ford by admin', async () => {
-      const res = await request.get('/api/v1/cars?status=available&manufacturer=ford')
-        .set('x-access-token', `Bearer ${adminToken}`)
+  describe('GET /car?status=available&manufacturer=ford', () => {
+    it('View all car advertisement whose manaufacturer is ford by seller', async () => {
+      const res = await request.get('/api/v1/car?status=available&manufacturer=ford')
+        .set('Authorization', `Bearer ${sellerToken}`)
         .set('accept', 'json')
         .expect(200);
 
-      const { success, payload } = res.body;
-      assert.deepStrictEqual([true, 1], [success, payload.length]);
+      const { success, data } = res.body;
+      assert.deepStrictEqual([true, 1], [success, data.length]);
     });
   });
 
-  describe('GET /cars?body_type=car', () => {
-    it('View all car advertisement whose body type is car by admin', async () => {
-      const res = await request.get('/api/v1/cars?body_type=car')
-        .set('x-access-token', `Bearer ${adminToken}`)
+  describe('GET /car?body_type=car', () => {
+    it('View all car advertisement whose body type is car by seller', async () => {
+      const res = await request.get('/api/v1/car?body_type=car')
+        .set('Authorization', `Bearer ${sellerToken}`)
         .set('accept', 'json')
         .expect(200);
 
-      const { success, payload } = res.body;
-      assert.deepStrictEqual([true, 3], [success, payload.length]);
+      const { success, data } = res.body;
+      assert.deepStrictEqual([true, 1], [success, data.length]);
     });
   });
 
-  describe('GET /cars?status=available&min_price=120000&max_price=20000000', () => {
-    it('View all car advertisement that are available and within the range of 120000 to 20000000 by admin', async () => {
-      const res = await request.get('/api/v1/cars?status=available&min_price=120000&max_price=20000000')
-        .set('x-access-token', `Bearer ${adminToken}`)
+  describe('GET /car?status=available&min_price=120000&max_price=20000000', () => {
+    it('View all car advertisement that are available and within the range of 120000 to 20000000 by seller', async () => {
+      const res = await request.get('/api/v1/car?status=available&min_price=120000&max_price=20000000')
+        .set('Authorization', `Bearer ${sellerToken}`)
         .set('accept', 'json')
         .expect(200);
 
-      const { success, payload } = res.body;
-      assert.deepStrictEqual([true, 3], [success, payload.length]);
+      const { success, data } = res.body;
+      assert.deepStrictEqual([true, 2], [success, data.length]);
     });
   });
 
@@ -236,38 +256,38 @@ describe('Car advertisement API Routes', () => {
    * Buyer can view all cars published by all sellers
    */
 
-  describe('GET /cars', () => {
-    it('View all car advertisement by admin', async () => {
-      const res = await request.get('/api/v1/cars')
-        .set('x-access-token', `Bearer ${adminToken}`)
-        .set('accept', 'json')
-        .expect(200);
-
-      const { success, payload } = res.body;
-      assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
-    });
-  });
-
-  describe('GET /seller/cars', () => {
+  describe('GET /car', () => {
     it('View all car advertisement by sellers', async () => {
-      const res = await request.get('/api/v1/seller/cars')
-        .set('x-access-token', `Bearer ${sellerToken}`)
+      const res = await request.get('/api/v1/car')
+        .set('Authorization', `Bearer ${sellerToken}`)
         .set('accept', 'json')
         .expect(200);
 
-      const { success, payload } = res.body;
-      assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
+      const { success, data } = res.body;
+      assert.deepStrictEqual([true, 'object'], [success, typeof data]);
     });
   });
 
-  describe('GET /buyer/cars', () => {
-    it('View all car advertisement by buyers', async () => {
-      const res = await request.get('/api/v1/buyer/cars')
+  describe('GET /car', () => {
+    it('View all car advertisement by admin', async () => {
+      const res = await request.get('/api/v1/car')
+        .set('Authorization', `Bearer ${adminToken}`)
         .set('accept', 'json')
         .expect(200);
 
-      const { success, payload } = res.body;
-      assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
+      const { success, data } = res.body;
+      assert.deepStrictEqual([true, 'object'], [success, typeof data]);
+    });
+  });
+
+  describe('GET /buyer/car', () => {
+    it('View all car advertisement by buyers', async () => {
+      const res = await request.get('/api/v1/buyer/car')
+        .set('accept', 'json')
+        .expect(200);
+
+      const { success, data } = res.body;
+      assert.deepStrictEqual([true, 'object'], [success, typeof data]);
     });
   });
 
@@ -281,12 +301,12 @@ describe('Car advertisement API Routes', () => {
           state: 'used',
           body_type: 'car',
         })
-        .set('x-access-token', `Bearer ${sellerToken}`)
+        .set('Authorization', `Bearer ${sellerToken}`)
         .set('accept', 'json')
         .expect(200);
 
-      const { success, payload } = res.body;
-      assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
+      const { success, data } = res.body;
+      assert.deepStrictEqual([true, 'object'], [success, typeof data]);
     });
   });
 
@@ -296,12 +316,12 @@ describe('Car advertisement API Routes', () => {
         .send({
           price: 150000,
         })
-        .set('x-access-token', `Bearer ${sellerToken}`)
+        .set('Authorization', `Bearer ${sellerToken}`)
         .set('accept', 'json')
         .expect(200);
 
-      const { success, payload } = res.body;
-      assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
+      const { success, data } = res.body;
+      assert.deepStrictEqual([true, 'object'], [success, typeof data]);
     });
   });
 
@@ -311,12 +331,12 @@ describe('Car advertisement API Routes', () => {
         .send({
           price: 100000,
         })
-        .set('x-access-token', `Bearer ${sellerToken}`)
+        .set('Authorization', `Bearer ${sellerToken}`)
         .set('accept', 'json')
         .expect(403);
 
-      const { success, message } = res.body;
-      assert.deepStrictEqual([false, 'string'], [success, typeof message]);
+      const { success, error } = res.body;
+      assert.deepStrictEqual([false, 'string'], [success, typeof error]);
     });
   });
 
@@ -326,12 +346,12 @@ describe('Car advertisement API Routes', () => {
         .send({
           status: 'sold',
         })
-        .set('x-access-token', `Bearer ${sellerToken}`)
+        .set('Authorization', `Bearer ${sellerToken}`)
         .set('accept', 'json')
         .expect(200);
 
-      const { success, payload } = res.body;
-      assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
+      const { success, data } = res.body;
+      assert.deepStrictEqual([true, 'object'], [success, typeof data]);
     });
   });
 
@@ -341,60 +361,60 @@ describe('Car advertisement API Routes', () => {
         .send({
           status: 'sold',
         })
-        .set('x-access-token', `Bearer ${sellerToken}`)
+        .set('Authorization', `Bearer ${sellerToken}`)
         .set('accept', 'json')
         .expect(403);
 
-      const { success, message } = res.body;
-      assert.deepStrictEqual([false, 'string'], [success, typeof message]);
+      const { success, error } = res.body;
+      assert.deepStrictEqual([false, 'string'], [success, typeof error]);
     });
   });
 
   describe('PATCH /car/1/draft', () => {
     it('Draft car advertisement by the seller', async () => {
       const res = await request.patch('/api/v1/car/1/draft')
-        .set('x-access-token', `Bearer ${sellerToken}`)
+        .set('Authorization', `Bearer ${sellerToken}`)
         .set('accept', 'json')
         .expect(200);
 
-      const { success, payload } = res.body;
-      assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
+      const { success, data } = res.body;
+      assert.deepStrictEqual([true, 'object'], [success, typeof data]);
     });
   });
 
   describe('PATCH /car/2/draft', () => {
     it('Seller draft car advertisement by another seller', async () => {
       const res = await request.patch('/api/v1/car/2/draft')
-        .set('x-access-token', `Bearer ${sellerToken}`)
+        .set('Authorization', `Bearer ${sellerToken}`)
         .set('accept', 'json')
         .expect(403);
 
-      const { success, message } = res.body;
-      assert.deepStrictEqual([false, 'string'], [success, typeof message]);
+      const { success, error } = res.body;
+      assert.deepStrictEqual([false, 'string'], [success, typeof error]);
     });
   });
 
   describe('PATCH /car/1/publish', () => {
     it('Publish car advertisement by the seller', async () => {
       const res = await request.patch('/api/v1/car/1/publish')
-        .set('x-access-token', `Bearer ${sellerToken}`)
+        .set('Authorization', `Bearer ${sellerToken}`)
         .set('accept', 'json')
         .expect(200);
 
-      const { success, payload } = res.body;
-      assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
+      const { success, data } = res.body;
+      assert.deepStrictEqual([true, 'object'], [success, typeof data]);
     });
   });
 
   describe('PATCH /car/2/publish', () => {
     it('Seller publish car advertisement by another seller', async () => {
       const res = await request.patch('/api/v1/car/2/publish')
-        .set('x-access-token', `Bearer ${sellerToken}`)
+        .set('Authorization', `Bearer ${sellerToken}`)
         .set('accept', 'json')
         .expect(403);
 
-      const { success, message } = res.body;
-      assert.deepStrictEqual([false, 'string'], [success, typeof message]);
+      const { success, error } = res.body;
+      assert.deepStrictEqual([false, 'string'], [success, typeof error]);
     });
   });
 
@@ -410,8 +430,8 @@ describe('Car advertisement API Routes', () => {
         .set('accept', 'json')
         .expect(200);
 
-      const { success, payload } = res.body;
-      assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
+      const { success, data } = res.body;
+      assert.deepStrictEqual([true, 'object'], [success, typeof data]);
     });
   });
 
@@ -421,44 +441,44 @@ describe('Car advertisement API Routes', () => {
         .set('accept', 'json')
         .expect(403);
 
-      const { success, message } = res.body;
-      assert.deepStrictEqual([false, 'string'], [success, typeof message]);
+      const { success, error } = res.body;
+      assert.deepStrictEqual([false, 'string'], [success, typeof error]);
     });
   });
 
   describe('GET /car/5', () => {
     it('Seller view car advertisement created by the  seller', async () => {
       const res = await request.get('/api/v1/car/5')
-        .set('x-access-token', `Bearer ${sellerToken}`)
+        .set('Authorization', `Bearer ${sellerToken}`)
         .set('accept', 'json')
         .expect(200);
 
-      const { success, payload } = res.body;
-      assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
+      const { success, data } = res.body;
+      assert.deepStrictEqual([true, 'object'], [success, typeof data]);
     });
   });
 
   describe('GET /car/3', () => {
     it('Seller view car advertisement created by the other seller', async () => {
       const res = await request.get('/api/v1/car/3')
-        .set('x-access-token', `Bearer ${sellerToken}`)
+        .set('Authorization', `Bearer ${sellerToken}`)
         .set('accept', 'json')
         .expect(403);
 
-      const { success, message } = res.body;
-      assert.deepStrictEqual([false, 'string'], [success, typeof message]);
+      const { success, error } = res.body;
+      assert.deepStrictEqual([false, 'string'], [success, typeof error]);
     });
   });
 
   describe('GET /car/5', () => {
     it('Admin view car advertisement created by any seller', async () => {
       const res = await request.get('/api/v1/car/3')
-        .set('x-access-token', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${adminToken}`)
         .set('accept', 'json')
         .expect(200);
 
-      const { success, payload } = res.body;
-      assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
+      const { success, data } = res.body;
+      assert.deepStrictEqual([true, 'object'], [success, typeof data]);
     });
   });
 
@@ -469,85 +489,118 @@ describe('Car advertisement API Routes', () => {
   describe('DELETE /car/5', () => {
     it('Seller delete car advertisement created the seller', async () => {
       const res = await request.delete('/api/v1/car/5')
-        .set('x-access-token', `Bearer ${sellerToken}`)
+        .set('Authorization', `Bearer ${sellerToken}`)
         .set('accept', 'json')
         .expect(200);
 
-      const { success, payload } = res.body;
-      assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
+      const { success, data } = res.body;
+      assert.deepStrictEqual([true, 'string'], [success, typeof data]);
     });
   });
 
   describe('DELETE /car/2', () => {
     it('Seller delete car advertisement created by other seller', async () => {
       const res = await request.delete('/api/v1/car/2')
-        .set('x-access-token', `Bearer ${sellerToken}`)
+        .set('Authorization', `Bearer ${sellerToken}`)
         .set('accept', 'json')
         .expect(403);
 
-      const { success, message } = res.body;
-      assert.deepStrictEqual([false, 'string'], [success, typeof message]);
+      const { success, error } = res.body;
+      assert.deepStrictEqual([false, 'string'], [success, typeof error]);
     });
   });
 
   describe('DELETE /car/4', () => {
     it('Admin delete car advertisement', async () => {
       const res = await request.delete('/api/v1/car/4')
-        .set('x-access-token', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${adminToken}`)
         .set('accept', 'json')
         .expect(200);
 
-      const { success, payload } = res.body;
-      assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
+      const { success, data } = res.body;
+      assert.deepStrictEqual([true, 'string'], [success, typeof data]);
     });
   });
 });
 
 describe('Make Purchase Order API', () => {
   let buyerToken;
+  let ownerToken;
+
   before(async () => {
-    await db.saveMany('orders', [
-      {
-        buyer: 1,
-        car_id: 1,
-        created_on: new Date(),
+    const orderDB = new BaseModel('orders');
+    try {
+      await orderDB.save({
+        buyer: '1',
+        car_id: '1',
         status: 'pending',
-        price: 120000,
-        price_offered: 100000,
-      },
-      {
-        buyer: 2,
-        car_id: 2,
-        created_on: new Date(),
+        price: '120000',
+        price_offered: '100000',
+        old_price_offered: '0',
+        new_price_offered: '100000',
+      });
+      await orderDB.save({
+        buyer: '2',
+        car_id: '2',
         status: 'pending',
-        price: 80000,
-        price_offered: 70000,
-      },
-    ]);
+        price: '80000',
+        price_offered: '70000',
+        old_price_offered: '0',
+        new_price_offered: '70000',
+      });
+    } catch (err) {
+      console.log(err);
+    } finally {
+      orderDB.db.end();
+    }
 
     // User
     const res = await request.post('/api/v1/auth/signin')
       .send({
         email: 'test2@automart.com',
-        password: 'secret',
+        password: 'testing',
       })
       .set('accept', 'json');
-    buyerToken = res.body.payload.token;
+    ownerToken = res.body.data.token;
+
+    const res2 = await request.post('/api/v1/auth/signin')
+      .send({
+        email: 'johnsmith@gmail.com',
+        password: 'johnsmith',
+      })
+      .set('accept', 'json');
+    buyerToken = res2.body.data.token;
   });
 
   describe('POST /order', () => {
     it('Buyer make purchase order', async () => {
       const res = await request.post('/api/v1/order')
         .send({
-          price_offered: 75000,
-          car_id: 2,
+          price: 75000,
+          car_id: 1,
         })
-        .set('x-access-token', `Bearer ${buyerToken}`)
+        .set('Authorization', `Bearer ${buyerToken}`)
         .set('accept', 'json')
-        .expect(200);
+        .expect(201);
 
-      const { success, payload } = res.body;
-      assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
+      const { success, data } = res.body;
+      assert.deepStrictEqual([true, 'object'], [success, typeof data]);
+    });
+  });
+
+  describe('POST /order', () => {
+    it('Buyer make purchase order of car advert he/she has made before while it is pending', async () => {
+      const res = await request.post('/api/v1/order')
+        .send({
+          price: 75000,
+          car_id: 1,
+        })
+        .set('Authorization', `Bearer ${buyerToken}`)
+        .set('accept', 'json')
+        .expect(422);
+
+      const { success, error } = res.body;
+      assert.deepStrictEqual([false, 'string'], [success, typeof error]);
     });
   });
 
@@ -555,15 +608,15 @@ describe('Make Purchase Order API', () => {
     it('Seller cannot make other of the car advert he or she created', async () => {
       const res = await request.post('/api/v1/order')
         .send({
-          price_offered: 110000,
+          price: 110000,
           car_id: 1,
         })
-        .set('x-access-token', `Bearer ${buyerToken}`)
+        .set('Authorization', `Bearer ${ownerToken}`)
         .set('accept', 'json')
         .expect(401);
 
-      const { success, message } = res.body;
-      assert.deepStrictEqual([false, 'string'], [success, typeof message]);
+      const { success, error } = res.body;
+      assert.deepStrictEqual([false, 'string'], [success, typeof error]);
     });
   });
 
@@ -571,14 +624,14 @@ describe('Make Purchase Order API', () => {
     it('Buyer updating his or her purchase order', async () => {
       const res = await request.patch('/api/v1/order/3/price')
         .send({
-          price_offered: 76000,
+          price: 76000,
         })
-        .set('x-access-token', `Bearer ${buyerToken}`)
+        .set('Authorization', `Bearer ${buyerToken}`)
         .set('accept', 'json')
         .expect(200);
 
-      const { success, payload } = res.body;
-      assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
+      const { success, data } = res.body;
+      assert.deepStrictEqual([true, 'object'], [success, typeof data]);
     });
   });
 
@@ -586,14 +639,14 @@ describe('Make Purchase Order API', () => {
     it('Buyer updating purchase order made by another buyer', async () => {
       const res = await request.patch('/api/v1/order/1/price')
         .send({
-          price_offered: 115000,
+          price: 115000,
         })
-        .set('x-access-token', `Bearer ${buyerToken}`)
+        .set('Authorization', `Bearer ${buyerToken}`)
         .set('accept', 'json')
         .expect(403);
 
-      const { success, message } = res.body;
-      assert.deepStrictEqual([false, 'string'], [success, typeof message]);
+      const { success, error } = res.body;
+      assert.deepStrictEqual([false, 'string'], [success, typeof error]);
     });
   });
 });
@@ -605,10 +658,10 @@ describe('Flag car advertisement API', () => {
     const res = await request.post('/api/v1/auth/signin')
       .send({
         email: 'test2@automart.com',
-        password: 'secret',
+        password: 'testing',
       })
       .set('accept', 'json');
-    buyerToken = res.body.payload.token;
+    buyerToken = res.body.data.token;
   });
 
   describe('POST /flag', () => {
@@ -619,19 +672,17 @@ describe('Flag car advertisement API', () => {
           car_id: 2,
           description: 'The price of the car AD is very high',
         })
-        .set('x-access-token', `Bearer ${buyerToken}`)
+        .set('Authorization', `Bearer ${buyerToken}`)
         .set('accept', 'json')
-        .expect(200);
+        .expect(201);
 
-      const { success, payload } = res.body;
-      assert.deepStrictEqual([true, 'object'], [success, typeof payload]);
+      const { success, data } = res.body;
+      assert.deepStrictEqual([true, 'object'], [success, typeof data]);
     });
   });
 });
 
 
-after(async () => {
-  await db.drop('cars');
-  await db.drop('users');
-  // await db.drop('orders');
-});
+// after(async () => {
+//   // await db.drop('orders');
+// });

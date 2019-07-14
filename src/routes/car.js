@@ -24,7 +24,11 @@ const routerNoAuth = express.Router();
 routerAuth.use(verifyToken);
 
 
-routerAuth.get('/cars', verifyAdmin, getCarsByAdmin);
+routerAuth.get('/car', verifyAdmin, getCarsByAdmin);
+
+routerAuth.get('/car', getCarsBySeller);
+
+routerNoAuth.get('/buyer/car', getCarsByBuyer);
 
 routerNoAuth.get('/car/:id', verifyPublished, getCar);
 
@@ -32,9 +36,6 @@ routerAuth.get('/car/:id', verifySeller, getCar);
 
 routerAuth.get('/car/:id', verifyAdmin, getCar);
 
-routerAuth.get('/seller/cars', getCarsBySeller);
-
-routerNoAuth.get('/buyer/cars', getCarsByBuyer);
 
 routerAuth.post('/car', create);
 
