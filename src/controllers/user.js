@@ -28,7 +28,9 @@ const getHashPassword = (data, user) => {
 };
 
 
-const sendNewPassword = async (password, data) => {
+// eslint-disable-next-line consistent-return
+const sendNewPassword = async (sendingMail, password, data) => {
+  if (!sendingMail) return false;
   const transport = nodemailer.createTransport(
     {
       host: process.env.MAIL_HOST,
@@ -108,6 +110,6 @@ export const passwordReset = async (req, res) => {
     return responseData(res, success, code, msg);
   } finally {
     db.db.end();
-    if (sendingMail) sendNewPassword(genPassword, accepted);
+    sendNewPassword(sendingMail, genPassword, accepted);
   }
 };

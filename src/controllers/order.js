@@ -1,6 +1,8 @@
 // import * as db from '../database/utilities/db-methods';
 import debug from 'debug';
-import { expectObj, responseData, isEmpty } from '../helper';
+import {
+  expectObj, responseData, isEmpty, throwError, getResponseData,
+} from '../helper';
 import Validator from '../middlewares/validation';
 import BaseModel from '../models/model';
 
@@ -48,64 +50,67 @@ export const create = async (req, res) => {
 
   const validate = new Validator();
   validate.make(body, rules);
-  if (validate.passes()) {
-    const db = new BaseModel('orders');
-    try {
-      const { rows } = await getCarById(body.car_id);
-      const [car] = rows;
-      /**
+  const db = new BaseModel('orders');
+  try {
+    if (validate.fails()) throwError(422, validate.getFirstError());
+    const { rows } = await getCarById(body.car_id);
+    const [car] = rows;
+    /**
        * If the seller try to make purchase of his/her own car ad respond with error
        * If the car ad is not published response with error
        * If the car does not exit respond with error
        */
-      const { success, statusCode, errMsg } = errorOccur(user.id, car);
-      if (!success) return responseData(res, success, statusCode, errMsg);
+    const { success, statusCode, errMsg } = errorOccur(user.id, car);
+    if (!success) throwError(statusCode, errMsg);
 
 
-      /**
+    /**
        * If buyer has already made purchase order for the car ad
        * response to the buyer with purchase already make and
        * it should be updated
        */
-      const orderRecord = await db.findByFilter({
-        car_id: {
-          column: 'car_id', operator: '=', value: accepted.car_id, logic: 'AND',
-        },
-        buyer: {
-          column: 'buyer', operator: '=', value: user.id, logic: 'AND',
-        },
-        status: {
-          column: 'status', operator: '=', value: 'pending', logic: '',
-        },
-      });
-      if (orderRecord.rows.length > 0) {
-        return responseData(res, false, 422, 'Purchase order has been made for this car ad by the buyer, try to update the purchase order');
-      }
+    const orderRecord = await db.findByFilter({
+      car_id: {
+        column: 'car_id', operator: '=', value: accepted.car_id, logic: 'AND',
+      },
+      buyer: {
+        column: 'buyer', operator: '=', value: user.id, logic: 'AND',
+      },
+      status: {
+        column: 'status', operator: '=', value: 'pending', logic: '',
+      },
+    });
+    if (orderRecord.rows.length > 0) throwError(422, 'Purchase order has been made for this car ad by the buyer, try to update the purchase order');
 
-      const payload = {
-        ...accepted,
-        ...{ status: 'pending' },
-        ...{ buyer: user.id },
-        ...{ price_offered: body.price },
-        ...{ new_price_offered: body.price },
-        ...{ old_price_offered: 0 },
-      };
+    const payload = {
+      ...accepted,
+      ...{ status: 'pending' },
+      ...{ buyer: user.id },
+      ...{ price_offered: body.price },
+      ...{ new_price_offered: body.price },
+      ...{ old_price_offered: 0 },
+    };
 
 
-      // Save the rest data to database
-      const order = await db.save(payload, ['status', 'car_id', 'buyer', 'price', 'price_offered', 'new_price_offered', 'old_price_offered']);
-      return responseData(res, true, 201, order);
-    } catch (err) {
-      orderDebug(err);
-      // If there is server error
-      return responseData(res, false, 500, 'Error creating order');
-    } finally {
-      await db.db.end();
-    }
+    // Save the rest data to database
+    const order = await db.save(payload, ['status', 'car_id', 'buyer', 'price', 'price_offered', 'new_price_offered', 'old_price_offered']);
+    return responseData(res, true, 201, order);
+  } catch (err) {
+    const { success, code, msg } = getResponseData(err, orderDebug, 'Error making purchase order');
+    return responseData(res, success, code, msg);
+  } finally {
+    await db.db.end();
   }
+};
 
-  // If validation fails
-  return responseData(res, false, 422, validate.getFirstError());
+const updatePriceError = (rows, order, user) => {
+  // If order does not exist response with order not found
+  if (rows.length === 0) throwError(404, 'Order not found');
+  // A buyer can only update his/her purchase order when it is still pending
+  if (order.status !== 'pending') throwError(403, 'Permission not allowed as the purchase order is no longer pending');
+
+  // A buyer can only updated his/her own purchase order
+  if (order.buyer !== user.id) throwError(403, 'Buyer not authorized');
 };
 
 export const updatePrice = async (req, res) => {
@@ -134,38 +139,28 @@ export const updatePrice = async (req, res) => {
   const orderId = parseInt(params.id, 10);
 
   // if validation passes
-  if (validate.passes()) {
-    const db = new BaseModel('orders');
-    try {
-      const { rows } = await db.findById(orderId);
-      const [order] = rows;
+  const db = new BaseModel('orders');
+  try {
+    if (validate.fails()) throwError(422, validate.getFirstError());
+    const { rows } = await db.findById(orderId);
+    const [order] = rows;
 
-      // If order does not exist response with order not found
-      if (rows.length === 0) return responseData(res, false, 404, 'Order not found');
-      // A buyer can only update his/her purchase order when it is still pending
-      if (order.status !== 'pending') return responseData(res, false, 403, 'Permission not allowed as the purchase order is no longer pending');
+    updatePriceError(rows, order, user);
+    // Update old_price_offered with previous order
+    const payload = {
+      ...accepted,
+      price_offered: body.price,
+      old_price_offered: order.price_offered,
+      new_price_offered: body.price,
+    };
 
-      // A buyer can only updated his/her own purchase order
-      if (order.buyer !== user.id) return responseData(res, false, 403, 'Buyer not authorized');
-
-      // Update old_price_offered with previous order
-      const payload = {
-        ...accepted,
-        price_offered: body.price,
-        old_price_offered: order.price_offered,
-        new_price_offered: body.price,
-      };
-
-      const orderRecord = await db.updateById(payload, orderId, ['status', 'car_id', 'buyer', 'price', 'price_offered', 'new_price_offered', 'old_price_offered']);
-      const [updateOrder] = orderRecord.rows;
-      return responseData(res, true, 200, updateOrder);
-    } catch (err) {
-      orderDebug(err);
-      return responseData(res, false, 501, 'Error updating order price');
-    } finally {
-      await db.db.end();
-    }
+    const orderRecord = await db.updateById(payload, orderId, ['status', 'car_id', 'buyer', 'price', 'price_offered', 'new_price_offered', 'old_price_offered']);
+    const [updateOrder] = orderRecord.rows;
+    return responseData(res, true, 200, updateOrder);
+  } catch (err) {
+    const { success, code, msg } = getResponseData(err, orderDebug, 'Error upading purchase order price');
+    return responseData(res, success, code, msg);
+  } finally {
+    await db.db.end();
   }
-
-  return responseData(res, false, 422, validate.getFirstError());
 };
