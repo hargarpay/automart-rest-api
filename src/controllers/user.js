@@ -4,8 +4,8 @@ import nodemailer from 'nodemailer';
 import {
   responseData, expectObj, isEmpty, getResponseData, throwError,
 } from '../helper';
-import Validator from '../middlewares/validation';
 import BaseModel from '../models/model';
+import { makeValidation } from '../helper/validation';
 
 const resetPasswordDebug = debug('automart:resetPassword');
 export const bcryptSalt = +process.env.BCRYPT_SALT;
@@ -51,17 +51,17 @@ const sendNewPassword = async (sendingMail, password, data) => {
   });
 };
 
-export const passwordReset = async (req, res) => {
-  const { body, params } = req;
-  const fillable = ['password', 'new_password'];
+const emailFilterConfig = accepted => ({
+  email: {
+    column: 'email', operator: '=', value: accepted.email, logic: '',
+  },
+});
 
-  const { status, message, accepted } = (expectObj(body, fillable));
-  if (status) {
-    // if there are invalid fields return error with feilds allowed
-    return responseData(res, false, 422, message);
-  }
+const emailErrorThrow = (rows) => {
+  if (rows.length === 0) throwError(422, 'Email does not exist');
+};
 
-  body.email = params.email;
+const passwordResetValidation = (body) => {
   // Set Validation rule
   const rules = {
     email: ['required', 'email'],
@@ -71,38 +71,33 @@ export const passwordReset = async (req, res) => {
   if (!isEmpty(body.password)) {
     rules.new_password = ['required', 'min_length:6'];
   }
+  return rules;
+};
 
-  const validate = new Validator();
+export const passwordReset = async (req, res) => {
+  const { body, params } = req;
+  const fillable = ['password', 'new_password'];
 
-  validate.make(body, rules);
+  const { status, message, accepted } = (expectObj(body, fillable));
+  if (status) return responseData(res, false, 422, message);
 
-  let sendingMail = false;
-  let genPassword;
+  body.email = params.email;
+  let genPasswordObject;
   accepted.email = params.email;
 
   const db = new BaseModel('users');
   try {
-    if (validate.fails()) return throwError(422, validate.getFirstError());
+    makeValidation(body, passwordResetValidation(body));
 
-    const { rows } = await db.findByFilter({
-      email: {
-        column: 'email', operator: '=', value: accepted.email, logic: '',
-      },
-    });
+    const { rows } = await db.findByFilter(emailFilterConfig(accepted));
 
-    // eslint-disable-next-line no-throw-literal
-    if (rows.length === 0) throw ({ success: false, code: 422, msg: 'Email does not exist' });
+    emailErrorThrow(rows);
     const [user] = rows;
     accepted.fullname = `${user.first_name} ${user.last_name}`;
     // If password is empty generate password if not updated the password
-    const genPasswordObject = getHashPassword(accepted, user);
-    sendingMail = genPasswordObject.sendMail;
-    genPassword = genPasswordObject.generatedPassord;
+    genPasswordObject = getHashPassword(accepted, user);
     const hashGenPass = genPasswordObject.hashPassword;
-    const successMsg = sendingMail === true
-      ? 'New password has been sent to your mail'
-      : 'The password has been updated';
-
+    const successMsg = genPasswordObject.sendMail === true ? 'New password has been sent to your mail' : 'The password has been updated';
     await db.updateById({ password: hashGenPass }, user.id);
     return responseData(res, true, 200, successMsg);
   } catch (e) {
@@ -110,6 +105,6 @@ export const passwordReset = async (req, res) => {
     return responseData(res, success, code, msg);
   } finally {
     db.db.end();
-    sendNewPassword(sendingMail, genPassword, accepted);
+    sendNewPassword(genPasswordObject.sendMail, genPasswordObject.generatedPassord, accepted);
   }
 };
