@@ -680,6 +680,32 @@ describe('Flag car advertisement API', () => {
       assert.deepStrictEqual([true, 'object'], [success, typeof data]);
     });
   });
+
+  describe('POST /users/test1@automart.com/reset_password', () => {
+    it('Reset Password', async () => {
+      const res = await request.post('/api/v1/users/test1@automart.com/reset_password')
+        .set('accept', 'json')
+        .expect(200);
+
+      const { success, data } = res.body;
+      assert.deepStrictEqual([true, 'string'], [success, typeof data]);
+    });
+  });
+
+  describe('POST /users/test2@automart.com/reset_password', () => {
+    it('Reset Password', async () => {
+      const res = await request.post('/api/v1/users/test2@automart.com/reset_password')
+        .send({
+          password: 'testing',
+          new_password: 'testings',
+        })
+        .set('accept', 'json')
+        .expect(200);
+
+      const { success, data } = res.body;
+      assert.deepStrictEqual([true, 'string'], [success, typeof data]);
+    });
+  });
 });
 
 
