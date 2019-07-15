@@ -3,4 +3,4 @@ node_js:
 - stable
 before_install:
 - openssl aes-256-cbc -K $encrypted_fea4917703d5_key -iv $encrypted_fea4917703d5_iv
-  -in credential_file.txt.enc -out credential_file.txt -d
+  -in secret_vars.txt.enc -out secret_vars.txt -d
