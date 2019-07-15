@@ -1,7 +1,7 @@
 
 # Enviroment Variable
 .env
-credential.txt
+credential_file.txt
 
 # Remove package lock file
 package-lock.json
