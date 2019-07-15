@@ -1,6 +1,8 @@
 import debug from 'debug';
 // import * as db from '../database/utilities/db-methods';
-import { isEmpty, responseData, expectObj } from '../helper';
+import {
+  isEmpty, responseData, expectObj, throwError, getResponseData,
+} from '../helper';
 import BaseModel from '../models/model';
 import Validator from '../middlewares/validation';
 
@@ -125,43 +127,38 @@ export const create = async (req, res) => {
     const validate = new Validator();
     validate.make(body, rules);
     // If validation passes
-    if (validate.passes()) {
-      // Check if the data has been save in in database before
-      const record = await db.findByFilter({
-        manufacturer: {
-          column: 'manufacturer', operator: '=', value: accepted.manufacturer, logic: 'AND',
-        },
-        model: {
-          column: 'model', operator: '=', value: accepted.model, logic: 'AND',
-        },
-        body_type: {
-          column: 'body_type', operator: '=', value: accepted.body_type, logic: 'AND',
-        },
-        owner: {
-          column: 'owner', operator: '=', value: user.id, logic: '',
-        },
-      });
-      if (record.rows.length > 0) {
-        return responseData(res, false, 422, `Car with ${accepted.model} model, ${accepted.manufacturer} manufacturer, ${accepted.body_type} body type and has already been created by seller`);
-      }
-      // Added the owner id to the accepted data for database
-      const payload = {
-        ...accepted,
-        ...{ status: 'available' },
-        ...{ owner: `${user.id}` },
-      };
-        // Store data to database and get the ID
-      const car = await db.save(payload, ['state', 'price', 'manufacturer', 'model', 'body_type', 'status', 'owner']);
-      // return successful response
-      return responseData(res, true, 201, car);
+    if (validate.fails()) throwError(422, validate.getFirstError());
+    // Check if the data has been save in in database before
+    const record = await db.findByFilter({
+      manufacturer: {
+        column: 'manufacturer', operator: '=', value: accepted.manufacturer, logic: 'AND',
+      },
+      model: {
+        column: 'model', operator: '=', value: accepted.model, logic: 'AND',
+      },
+      body_type: {
+        column: 'body_type', operator: '=', value: accepted.body_type, logic: 'AND',
+      },
+      owner: {
+        column: 'owner', operator: '=', value: user.id, logic: '',
+      },
+    });
+    if (record.rows.length > 0) {
+      throwError(422, `Car with ${accepted.model} model, ${accepted.manufacturer} manufacturer, ${accepted.body_type} body type and has already been created by seller`);
     }
-
-    // return invalid message
-    return responseData(res, false, 422, validate.getFirstError());
+    // Added the owner id to the accepted data for database
+    const payload = {
+      ...accepted,
+      ...{ status: 'available' },
+      ...{ owner: `${user.id}` },
+    };
+    // Store data to database and get the ID
+    const car = await db.save(payload, ['state', 'price', 'manufacturer', 'model', 'body_type', 'status', 'owner']);
+    // return successful response
+    return responseData(res, true, 201, car);
   } catch (error) {
-    carDebug(error);
-    // return error message if something is wrong
-    return responseData(res, false, 500, 'Error creating car');
+    const { success, code, msg } = getResponseData(error, carDebug, 'Error creating car');
+    return responseData(res, success, code, msg);
   } finally {
     await db.db.end();
   }
@@ -207,25 +204,24 @@ const updateField = async (req, options) => {
     const validate = new Validator();
     validate.make(body, rules);
     // if validation passes
-    if (validate.passes()) {
-      // Check if the car id exist
-      const carRecord = await db.findById(carId);
-      // If user is authorized
-      const { success, code, errMsg } = authorizedValidation(carRecord, user);
-      if (!success) return { success, code, payload: errMsg };
-      // Update data by Id
-      const { rows } = await db.updateById(accepted, carId, ['state', 'manufacturer', 'price', 'model', 'body_type', 'status', 'owner']);
-      const [updateCar] = rows;
+    if (validate.fails()) throwError(422, validate.getFirstError());
+    // Check if the car id exist
+    const carRecord = await db.findById(carId);
+    // If user is authorized
+    const { success, code, errMsg } = authorizedValidation(carRecord, user);
+    if (!success) throwError(code, errMsg);
+    // Update data by Id
+    const { rows } = await db.updateById(accepted, carId, ['state', 'manufacturer', 'price', 'model', 'body_type', 'status', 'owner']);
+    const [updateCar] = rows;
 
-      // Update the data and response with successful message
-      return { success: true, code: 200, payload: updateCar };
-    }
+    // Update the data and response with successful message
+    return { success: true, code: 200, payload: updateCar };
+    // }
     // If validation fails return with validation error message
-    return { success: false, code: 422, payload: validate.getFirstError() };
+    // return { success: false, code: 422, payload: validate.getFirstError() };
   } catch (error) {
-    // Error with database processing
-    carDebug(error);
-    return { success: false, code: 500, payload: errorMessage };
+    const { success, code, msg } = getResponseData(error, carDebug, errorMessage);
+    return { success, code, payload: msg };
   } finally {
     await db.db.end();
   }

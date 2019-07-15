@@ -1,7 +1,9 @@
 import debug from 'debug';
 import bcrypt from 'bcryptjs';
 import nodemailer from 'nodemailer';
-import { responseData, expectObj, isEmpty } from '../helper';
+import {
+  responseData, expectObj, isEmpty, getResponseData, throwError,
+} from '../helper';
 import Validator from '../middlewares/validation';
 import BaseModel from '../models/model';
 
@@ -25,18 +27,6 @@ const getHashPassword = (data, user) => {
   return { sendMail, hashPassword, generatedPassord };
 };
 
-const getResponseData = (e) => {
-  const success = false; let statusCode; let errorMsg;
-  if (typeof e === 'object') {
-    statusCode = e.code;
-    errorMsg = e.msg;
-  } else {
-    resetPasswordDebug(e);
-    statusCode = 500;
-    errorMsg = 'Error reseting password';
-  }
-  return { success, code: statusCode, msg: errorMsg };
-};
 
 const sendNewPassword = async (password, data) => {
   const transport = nodemailer.createTransport(
@@ -88,9 +78,10 @@ export const passwordReset = async (req, res) => {
   let genPassword;
   accepted.email = params.email;
 
-  if (validate.fails()) return responseData(res, false, 422, validate.getFirstError());
   const db = new BaseModel('users');
   try {
+    if (validate.fails()) return throwError(422, validate.getFirstError());
+
     const { rows } = await db.findByFilter({
       email: {
         column: 'email', operator: '=', value: accepted.email, logic: '',
@@ -113,7 +104,7 @@ export const passwordReset = async (req, res) => {
     await db.updateById({ password: hashGenPass }, user.id);
     return responseData(res, true, 200, successMsg);
   } catch (e) {
-    const { success, code, msg } = getResponseData(e);
+    const { success, code, msg } = getResponseData(e, resetPasswordDebug, 'Error Resetting Password');
     return responseData(res, success, code, msg);
   } finally {
     db.db.end();

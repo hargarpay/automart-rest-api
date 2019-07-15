@@ -134,3 +134,21 @@ export const responseData = (res, success, code, data) => {
     [dataKey]: data,
   });
 };
+
+export const throwError = (code, msg) => {
+  // eslint-disable-next-line no-throw-literal
+  throw ({ success: false, code, msg });
+};
+
+export const getResponseData = (e, serverDubug, serverError) => {
+  const success = false; let statusCode; let errorMsg;
+  if (typeof e === 'object') {
+    statusCode = e.code;
+    errorMsg = e.msg;
+  } else {
+    serverDubug(e);
+    statusCode = 500;
+    errorMsg = serverError;
+  }
+  return { success, code: statusCode, msg: errorMsg };
+};

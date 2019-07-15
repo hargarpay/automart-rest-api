@@ -1,9 +1,12 @@
+/* eslint-disable no-throw-literal */
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import debug from 'debug';
 import BaseModel from '../models/model';
 import Validator from '../middlewares/validation';
-import { expectObj, responseData } from '../helper';
+import {
+  expectObj, responseData, throwError, getResponseData,
+} from '../helper';
 import { uniqueData } from '../helper/model';
 
 const bcryptSalt = +process.env.BCRYPT_SALT;
@@ -41,41 +44,38 @@ export const register = async (req, res) => {
   validate.make(body, rules);
 
   // If Validation passes
-  if (validate.passes()) {
-    const db = new BaseModel('users');
-    try {
-      // Check if email is unique
-      const result = await uniqueData(accepted.email, ['users', 'email']);
+  if (validate.fails()) return responseData(res, false, 422, validate.getFirstError());
+  const db = new BaseModel('users');
+  try {
+    // Check if email is unique
+    const result = await uniqueData(accepted.email, ['users', 'email']);
 
-      // If email is not unique send message
-      if (result.status) return responseData(res, false, 422, result.message);
+    // If email is not unique send message
+    if (result.status) throwError(422, result.message);
 
-      // Hash password
-      const hashPassword = bcrypt.hashSync(body.password, bcrypt.genSaltSync(bcryptSalt));
+    // Hash password
+    const hashPassword = bcrypt.hashSync(body.password, bcrypt.genSaltSync(bcryptSalt));
 
-      // Prepare valid and expected data for sql
-      const payload = { ...accepted, ...{ password: hashPassword, is_admin: false } };
+    // Prepare valid and expected data for sql
+    const payload = { ...accepted, ...{ password: hashPassword, is_admin: false } };
 
-      // Save data
-      const user = await db.save(payload, ['first_name', 'last_name', 'email', 'is_admin', 'address']);
+    // Save data
+    const user = await db.save(payload, ['first_name', 'last_name', 'email', 'is_admin', 'address']);
 
-      // Generate token
-      const token = jwt.sign({ user }, jwtSalt, { expiresIn: 43200 });
+    // Generate token
+    const token = jwt.sign({ user }, jwtSalt, { expiresIn: 43200 });
 
-      // Add token to the user data
-      const newPayload = { ...user, ...{ token } };
-      // Send successful response
-      return responseData(res, true, 201, newPayload);
-    } catch (error) {
-      userDebug(error);
-      // If server error was throw reponse with the server error
-      return responseData(res, false, 500, 'There was an error creating user');
-    } finally {
-      await db.db.end();
-    }
+    // Add token to the user data
+    const newPayload = { ...user, ...{ token } };
+    // Send successful response
+    return responseData(res, true, 201, newPayload);
+  } catch (error) {
+    const { success, code, msg } = getResponseData(error, userDebug, 'There was an error creating user');
+    return responseData(res, success, code, msg);
+  } finally {
+    await db.db.end();
   }
   // If the validation do not pass reponse with error
-  return responseData(res, false, 422, validate.getFirstError());
 };
 
 export const login = async (req, res) => {
@@ -105,46 +105,37 @@ export const login = async (req, res) => {
   validate.make(body, rules);
 
   // If Validation passes
-  if (validate.passes()) {
-    const db = new BaseModel('users');
-    try {
-      // Check if user exist
+  if (validate.fails()) return responseData(res, false, 422, validate.getFirstError());
+  const db = new BaseModel('users');
+  try {
+    // Check if user exist
 
-      const { rows } = await db.findByFilter({
-        email: {
-          column: 'email',
-          value: accepted.email,
-          operator: '=',
-          logic: '',
-        },
-      });
+    const { rows } = await db.findByFilter({
+      email: {
+        column: 'email',
+        value: accepted.email,
+        operator: '=',
+        logic: '',
+      },
+    });
       // If user does not exist response with error;
-      if (rows.length === 0) {
-        return responseData(res, false, 404, 'Email not found in database');
-      }
-      const [user] = rows;
+    if (rows.length === 0) throwError(404, 'Email not found in database');
+    const [user] = rows;
 
-      // Check if user password is correct
-      if (!bcrypt.compareSync(accepted.password, user.password)) {
-        return responseData(res, false, 422, 'Credential is invalid');
-      }
+    // Check if user password is correct
+    if (!bcrypt.compareSync(accepted.password, user.password)) throwError(422, 'Credential is invalid');
 
-      // Generate token and add it to data
-      const token = jwt.sign({ user }, jwtSalt, { expiresIn: 43200 });
-      const payload = { ...user, ...{ token } };
+    // Generate token and add it to data
+    const token = jwt.sign({ user }, jwtSalt, { expiresIn: 43200 });
+    const payload = { ...user, ...{ token } };
 
-      // Remove the password from the data and send back data
-      delete payload.password;
-      return responseData(res, true, 200, payload);
-    } catch (err) {
-      userDebug(err);
-      console.log(err);
-      // Server error reponse
-      return responseData(res, false, 500, 'Authentication Fail');
-    } finally {
-      await db.db.end();
-    }
+    // Remove the password from the data and send back data
+    delete payload.password;
+    return responseData(res, true, 200, payload);
+  } catch (err) {
+    const { success, code, msg } = getResponseData(err, userDebug, 'Authentication Fail');
+    return responseData(res, success, code, msg);
+  } finally {
+    await db.db.end();
   }
-  // If the validation do not pass reponse with error
-  return responseData(res, false, 422, validate.getFirstError());
 };
