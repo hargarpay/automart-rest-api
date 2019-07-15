@@ -12,13 +12,8 @@ export const uniqueData = async (value, parameters) => {
       },
     });
     const status = rows.length > 0;
-    return {
-      status,
-      message: `${value} already exist in ${column} field`,
-    };
+    return { status, message: `${value} already exist in ${column} field` };
   } catch (e) {
     throw new Error(`Error thrown: ${e}`);
-  } finally {
-    await db.db.end();
-  }
+  } finally { await db.db.end(); }
 };
