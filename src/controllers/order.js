@@ -44,32 +44,34 @@ const carExistFilterConfig = (accepted, user) => (
   }
 );
 
-const carDataForDB = (accepted, user, body) => ({
-  ...accepted,
-  ...{ status: 'pending' },
-  ...{ buyer: user.id },
-  ...{ price_offered: body.price },
-  ...{ new_price_offered: body.price },
-  ...{ old_price_offered: 0 },
-});
+const carDataForDB = (accepted, user, body) => {
+  const priceOrder = body.price || body.amount;
+  return ({
+    ...accepted,
+    ...{ status: 'pending' },
+    ...{ buyer: user.id },
+    ...{ price_offered: priceOrder },
+    ...{ new_price_offered: priceOrder },
+    ...{ old_price_offered: 0 },
+  });
+};
 
-const carValidationRules = () => ({
-  car_id: ['required', 'is_numeric'],
-  price: ['required', 'is_numeric', 'min_length:2'],
-});
-
+const carValidationRules = (body) => {
+  const ruleProps = isEmpty(body.price) ? 'amount' : 'price';
+  return ({
+    car_id: ['required', 'is_numeric'],
+    [ruleProps]: ['required', 'is_numeric', 'min_length:2'],
+  });
+};
 export const create = async (req, res) => {
   // Get user and body from req Object
   const { user, body } = req;
-  console.group('Order Fields');
-  console.log(body);
-  console.groupEnd();
-  const fillable = ['car_id', 'price'];
+  const fillable = ['car_id', 'price', 'amount'];
   const { status, message, accepted } = expectObj(body, fillable);
   if (status) return responseData(res, false, 422, message);
   const db = new BaseModel('orders');
   try {
-    makeValidation(body, carValidationRules());
+    makeValidation(body, carValidationRules(body));
     const { rows } = await getCarById(body.car_id);
     const [car] = rows;
     const { success, statusCode, errMsg } = errorOccur(user.id, car);
@@ -87,14 +89,15 @@ export const create = async (req, res) => {
 };
 
 
-const carUpdatePriceForDB = (accepted, body, order) => (
-  {
+const carUpdatePriceForDB = (accepted, body, order) => {
+  const mainPrice = body.amount || body.price;
+  return ({
     ...accepted,
-    price_offered: body.price,
+    price_offered: mainPrice,
     old_price_offered: order.price_offered,
-    new_price_offered: body.price,
-  }
-);
+    new_price_offered: mainPrice,
+  });
+};
 
 const updatePriceError = (rows, order, user) => {
   // If order does not exist response with order not found
@@ -111,7 +114,7 @@ export const updatePrice = async (req, res) => {
   const { params, body, user } = req;
 
   // Allowed fields
-  const fillable = ['price'];
+  const fillable = ['price', 'amount'];
   const { status, message, accepted } = expectObj(body, fillable);
   if (status) return responseData(res, false, 422, message);
 
@@ -121,7 +124,8 @@ export const updatePrice = async (req, res) => {
   // if validation passes
   const db = new BaseModel('orders');
   try {
-    makeValidation(body, { price: ['required', 'is_numeric', 'min_length:2'] });
+    const ruleProps = isEmpty(body.price) ? 'amount' : 'price';
+    makeValidation(body, { [ruleProps]: ['required', 'is_numeric', 'min_length:2'] });
 
     const { rows } = await db.findById(orderId);
     const [order] = rows;
