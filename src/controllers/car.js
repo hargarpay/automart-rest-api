@@ -139,8 +139,12 @@ export const create = async (req, res) => {
   // List accepted feilds
   // Check if all feilds are allowed, Remove fields that are not for database but allowed
   const { status, message, accepted } = (expectObj(body, carFillableField()));
+  console.group('After Fields Validation');
+  console.log(body);
   console.log(status);
   console.log(accepted);
+  console.groupEnd();
+
   if (status) return responseData(res, false, 422, message);
   // Check Validation
   const db = new BaseModel('cars');
@@ -148,7 +152,6 @@ export const create = async (req, res) => {
     makeValidation(body, carInputValidationRules());
     // Check if the data has been save in in database before
     const record = await db.findByFilter(carExistFilterConfig(accepted, user));
-    console.log(record.rows.length);
     if (record.rows.length > 0) throwError(422, `Car with ${accepted.model} model, ${accepted.manufacturer} manufacturer, ${accepted.body_type} body type and has already been created by seller`);
     // Store data to database and get the ID
     const returnCarProps = carFillableField().concat(['owner']);
@@ -156,7 +159,11 @@ export const create = async (req, res) => {
     return responseData(res, true, 201, car);
   } catch (error) {
     const { success, code, msg } = getResponseData(error, carDebug, 'Error creating car');
+    console.group('Catch Main Ca');
+    console.log(success);
     console.log(code);
+    console.log(msg);
+    console.groupEnd();
     return responseData(res, success, code, msg);
   } finally { await db.db.end(); }
 };

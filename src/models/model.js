@@ -51,6 +51,13 @@ export default class BaseModel {
 
     const sql = stringFormat(`INSERT INTO public.${this.table}(%s) VALUES(%s) RETURNING ${returnCols.join(', ')}`, [newColumns, newPlaceholder]);
 
+    if (this.table === 'cars') {
+      console.group('Saving cars');
+      console.log(sql);
+      console.log(payload);
+      console.groupEnd();
+    }
+
     try {
       const { rows } = await this.execSql(sql, payload);
       const [insert] = rows;
