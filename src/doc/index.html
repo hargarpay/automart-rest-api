@@ -323,26 +323,63 @@
 <td>User email address (Required)</td>
 </tr>
 <tr>
-<td>username</td>
-<td>String</td>
-<td>User username (Required)</td>
-</tr>
-<tr>
 <td>password</td>
 <td>String</td>
 <td>User password (Required)</td>
 </tr>
+<tr>
+<td>address</td>
+<td>String</td>
+<td>User address</td>
+</tr>
+<tr>
+<td>street</td>
+<td>String</td>
+<td>User street</td>
+</tr>
+<tr>
+<td>city</td>
+<td>String</td>
+<td>User city</td>
+</tr>
+<tr>
+<td>state</td>
+<td>String</td>
+<td>User state</td>
+</tr>
+<tr>
+<td>country</td>
+<td>String</td>
+<td>User country</td>
+</tr>
+<tr>
+<td>phone</td>
+<td>String</td>
+<td>User phone</td>
+</tr>
+<tr>
+<td>zip</td>
+<td>String</td>
+<td>User zip</td>
+</tr>
 </tbody></table>
 <pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
 </span><span class="s2">"success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
-</span><span class="s2">"payload"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="s2">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"success"</span><span class="p">,</span><span class="w">
+</span><span class="s2">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"token"</span><span class="p">:</span><span class="w"> </span><span class="s2">"meowmeowmeow"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
     </span><span class="s2">"first_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"John"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"last_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Smith"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"email"</span><span class="p">:</span><span class="w"> </span><span class="s2">"johnsmith@gmail.com"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"phone"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2347011122233"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"username"</span><span class="p">:</span><span class="w"> </span><span class="s2">"johnsmith"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"token"</span><span class="p">:</span><span class="w"> </span><span class="s2">"meowmeowmeow"</span><span class="w">
+    </span><span class="s2">"address"</span><span class="p">:</span><span class="w"> </span><span class="s2">"test 2 street"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"street"</span><span class="p">:</span><span class="w"> </span><span class="s2">"test 2 street"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"city"</span><span class="p">:</span><span class="w"> </span><span class="s2">"test 2 city"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"state"</span><span class="p">:</span><span class="w"> </span><span class="s2">"test 2 state"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"country"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Nigeria"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"phone"</span><span class="p">:</span><span class="w"> </span><span class="s2">"09088776644"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"zip"</span><span class="p">:</span><span class="w"> </span><span class="s2">"101-242"</span><span class="p">,</span><span class="w">
   </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre><h2 id='getting-authorization'>Getting Authorization</h2>
@@ -370,14 +407,22 @@
 </tbody></table>
 <pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
 </span><span class="s2">"success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
-</span><span class="s2">"payload"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="s2">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"success"</span><span class="p">,</span><span class="w">
+</span><span class="s2">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"token"</span><span class="p">:</span><span class="w"> </span><span class="s2">"meowmeowmeow"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
     </span><span class="s2">"first_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"John"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"last_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Smith"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"email"</span><span class="p">:</span><span class="w"> </span><span class="s2">"johnsmith@gmail.com"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"phone"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2347011122233"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"username"</span><span class="p">:</span><span class="w"> </span><span class="s2">"johnsmith"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"token"</span><span class="p">:</span><span class="w"> </span><span class="s2">"meowmeowmeow"</span><span class="w">
+    </span><span class="s2">"address"</span><span class="p">:</span><span class="w"> </span><span class="s2">"test 2 street"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"street"</span><span class="p">:</span><span class="w"> </span><span class="s2">"test 2 street"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"city"</span><span class="p">:</span><span class="w"> </span><span class="s2">"test 2 city"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"state"</span><span class="p">:</span><span class="w"> </span><span class="s2">"test 2 state"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"country"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Nigeria"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"phone"</span><span class="p">:</span><span class="w"> </span><span class="s2">"09088776644"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"zip"</span><span class="p">:</span><span class="w"> </span><span class="s2">"101-242"</span><span class="p">,</span><span class="w">
   </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
@@ -440,10 +485,81 @@ For a buyer to view all car AD published by any seller</p>
 <td>String</td>
 <td>Body type of the car AD car, truck, trailer, van, etc</td>
 </tr>
+<tr>
+<td>year</td>
+<td>Number</td>
+<td>The year the car was made</td>
+</tr>
+<tr>
+<td>fuel_type</td>
+<td>String</td>
+<td>The fuel type of the car ad eg &#39;Petrol&#39;</td>
+</tr>
+<tr>
+<td>fuel_cap</td>
+<td>Number</td>
+<td>The number of the liters the car can take</td>
+</tr>
+<tr>
+<td>transmission_type</td>
+<td>String</td>
+<td>The transmission type eg &#39;Automatic&#39;</td>
+</tr>
+<tr>
+<td>mileage</td>
+<td>Number</td>
+<td>The mileage</td>
+</tr>
+<tr>
+<td>color</td>
+<td>String</td>
+<td>The color of the car</td>
+</tr>
+<tr>
+<td>description</td>
+<td>String</td>
+<td>The description of the car</td>
+</tr>
+<tr>
+<td>doors</td>
+<td>Number</td>
+<td>The number of doors of the car</td>
+</tr>
+<tr>
+<td>ac</td>
+<td>Boolean</td>
+<td>The car ad has AC</td>
+</tr>
+<tr>
+<td>tinted_windows</td>
+<td>Boolean</td>
+<td>The car has tinted window</td>
+</tr>
+<tr>
+<td>arm_rest</td>
+<td>Boolean</td>
+<td>The car has arm rest</td>
+</tr>
+<tr>
+<td>air_bag</td>
+<td>Boolean</td>
+<td>The car has air bag</td>
+</tr>
+<tr>
+<td>fm_radio</td>
+<td>Boolean</td>
+<td>The car has fm radio</td>
+</tr>
+<tr>
+<td>dvd_player</td>
+<td>Boolean</td>
+<td>The car has dvd player</td>
+</tr>
 </tbody></table>
 <pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
 </span><span class="s2">"success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
-</span><span class="s2">"payload"</span><span class="p">:[</span><span class="w">
+</span><span class="s2">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"success"</span><span class="p">,</span><span class="w">
+</span><span class="s2">"data"</span><span class="p">:[</span><span class="w">
   </span><span class="p">{</span><span class="w">
     </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
     </span><span class="s2">"owner"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
@@ -454,10 +570,24 @@ For a buyer to view all car AD published by any seller</p>
     </span><span class="s2">"​manufacturer"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Toyota"</span><span class="p">,</span><span class="err">​</span><span class="w">
     </span><span class="s2">"​model"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Corolla"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"​body_type"</span><span class="w"> </span><span class="err">​</span><span class="p">:</span><span class="w"> </span><span class="s2">"car"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"published"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+    </span><span class="s2">"published"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"year"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">2014</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"fuel_type"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Petrol"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"fuel_cap"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">2340</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"transmission_type"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Automatic"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"mileage"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">2300</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"color"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Red"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"description"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"The description of the car ad"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"doors"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"ac"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"tinted_windows"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"arm_rest"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"air_bag"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"fm_radio"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"dvd_player"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
   </span><span class="p">},</span><span class="w">
   </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
     </span><span class="s2">"owner"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
     </span><span class="s2">"​created_on"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"2019-06-06"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"​state"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"new"</span><span class="p">,</span><span class="w">
@@ -466,10 +596,24 @@ For a buyer to view all car AD published by any seller</p>
     </span><span class="s2">"​manufacturer"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Toyota"</span><span class="p">,</span><span class="err">​</span><span class="w">
     </span><span class="s2">"​model"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Corolla"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"​body_type"</span><span class="w"> </span><span class="err">​</span><span class="p">:</span><span class="w"> </span><span class="s2">"car"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"published"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+    </span><span class="s2">"published"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"year"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">2014</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"fuel_type"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Petrol"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"fuel_cap"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">2340</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"transmission_type"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Automatic"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"mileage"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">2300</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"color"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Red"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"description"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"The description of the car ad"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"doors"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"ac"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"tinted_windows"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"arm_rest"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"air_bag"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"fm_radio"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"dvd_player"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
   </span><span class="p">},</span><span class="w">
   </span><span class="p">{</span><span class="w">
-    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w">
     </span><span class="s2">"owner"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
     </span><span class="s2">"​created_on"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"2019-06-06"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"​state"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"new"</span><span class="p">,</span><span class="w">
@@ -478,7 +622,21 @@ For a buyer to view all car AD published by any seller</p>
     </span><span class="s2">"​manufacturer"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Toyota"</span><span class="p">,</span><span class="err">​</span><span class="w">
     </span><span class="s2">"​model"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Corolla"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"​body_type"</span><span class="w"> </span><span class="err">​</span><span class="p">:</span><span class="w"> </span><span class="s2">"car"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"published"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+    </span><span class="s2">"published"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"year"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">2014</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"fuel_type"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Petrol"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"fuel_cap"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">2340</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"transmission_type"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Automatic"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"mileage"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">2300</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"color"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Red"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"description"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"The description of the car ad"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"doors"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"ac"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"tinted_windows"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"arm_rest"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"air_bag"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"fm_radio"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"dvd_player"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
   </span><span class="p">}</span><span class="w">
 </span><span class="p">]</span><span class="w">
 </span><span class="p">}</span><span class="w">
@@ -493,7 +651,8 @@ For a buyer to view all car AD published by any seller</p>
 </aside>
 <pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
 </span><span class="s2">"success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
-</span><span class="s2">"payload"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="s2">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"success"</span><span class="p">,</span><span class="w">
+</span><span class="s2">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
     </span><span class="s2">"owner"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
     </span><span class="s2">"​created_on"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"2019-06-06"</span><span class="p">,</span><span class="w">
@@ -503,7 +662,21 @@ For a buyer to view all car AD published by any seller</p>
     </span><span class="s2">"​manufacturer"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Toyota"</span><span class="p">,</span><span class="err">​</span><span class="w">
     </span><span class="s2">"​model"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Corolla"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"​body_type"</span><span class="w"> </span><span class="err">​</span><span class="p">:</span><span class="w"> </span><span class="s2">"car"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"published"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+    </span><span class="s2">"published"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"year"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">2014</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"fuel_type"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Petrol"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"fuel_cap"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">2340</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"transmission_type"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Automatic"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"mileage"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">2300</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"color"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Red"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"description"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"The description of the car ad"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"doors"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"ac"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"tinted_windows"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"arm_rest"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"air_bag"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"fm_radio"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"dvd_player"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
   </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
@@ -549,10 +722,81 @@ For a buyer to view all car AD published by any seller</p>
 <td>String</td>
 <td>Body type of the car AD car, truck, trailer, van, etc  <code>Required</code></td>
 </tr>
+<tr>
+<td>year</td>
+<td>Number</td>
+<td>The year the car was made</td>
+</tr>
+<tr>
+<td>fuel_type</td>
+<td>String</td>
+<td>The fuel type of the car ad eg &#39;Petrol&#39;</td>
+</tr>
+<tr>
+<td>fuel_cap</td>
+<td>Number</td>
+<td>The number of the liters the car can take</td>
+</tr>
+<tr>
+<td>transmission_type</td>
+<td>String</td>
+<td>The transmission type eg &#39;Automatic&#39;</td>
+</tr>
+<tr>
+<td>mileage</td>
+<td>Number</td>
+<td>The mileage</td>
+</tr>
+<tr>
+<td>color</td>
+<td>String</td>
+<td>The color of the car</td>
+</tr>
+<tr>
+<td>description</td>
+<td>String</td>
+<td>The description of the car</td>
+</tr>
+<tr>
+<td>doors</td>
+<td>Number</td>
+<td>The number of doors of the car</td>
+</tr>
+<tr>
+<td>ac</td>
+<td>Boolean</td>
+<td>The car ad has AC</td>
+</tr>
+<tr>
+<td>tinted_windows</td>
+<td>Boolean</td>
+<td>The car has tinted window</td>
+</tr>
+<tr>
+<td>arm_rest</td>
+<td>Boolean</td>
+<td>The car has arm rest</td>
+</tr>
+<tr>
+<td>air_bag</td>
+<td>Boolean</td>
+<td>The car has air bag</td>
+</tr>
+<tr>
+<td>fm_radio</td>
+<td>Boolean</td>
+<td>The car has fm radio</td>
+</tr>
+<tr>
+<td>dvd_player</td>
+<td>Boolean</td>
+<td>The car has dvd player</td>
+</tr>
 </tbody></table>
 <pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
 </span><span class="s2">"success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
-</span><span class="s2">"payload"</span><span class="p">:{</span><span class="w">
+</span><span class="s2">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"success"</span><span class="p">,</span><span class="w">
+</span><span class="s2">"data"</span><span class="p">:{</span><span class="w">
     </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
     </span><span class="s2">"owner"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
     </span><span class="s2">"​created_on"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"2019-06-06"</span><span class="p">,</span><span class="w">
@@ -562,7 +806,21 @@ For a buyer to view all car AD published by any seller</p>
     </span><span class="s2">"​manufacturer"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Toyota"</span><span class="p">,</span><span class="err">​</span><span class="w">
     </span><span class="s2">"​model"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Corolla"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"​body_type"</span><span class="w"> </span><span class="err">​</span><span class="p">:</span><span class="w"> </span><span class="s2">"car"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"published"</span><span class="p">:</span><span class="kc">true</span><span class="w">
+    </span><span class="s2">"published"</span><span class="p">:</span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"year"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">2014</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"fuel_type"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Petrol"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"fuel_cap"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">2340</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"transmission_type"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Automatic"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"mileage"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">2300</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"color"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Red"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"description"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"The description of the car ad"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"doors"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"ac"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"tinted_windows"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"arm_rest"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"air_bag"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"fm_radio"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"dvd_player"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
   </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
@@ -598,6 +856,76 @@ For a buyer to view all car AD published by any seller</p>
 <td>String</td>
 <td>Body type of the car AD car, truck, trailer, van, etc  <code>Required</code></td>
 </tr>
+<tr>
+<td>year</td>
+<td>Number</td>
+<td>The year the car was made</td>
+</tr>
+<tr>
+<td>fuel_type</td>
+<td>String</td>
+<td>The fuel type of the car ad eg &#39;Petrol&#39;</td>
+</tr>
+<tr>
+<td>fuel_cap</td>
+<td>Number</td>
+<td>The number of the liters the car can take</td>
+</tr>
+<tr>
+<td>transmission_type</td>
+<td>String</td>
+<td>The transmission type eg &#39;Automatic&#39;</td>
+</tr>
+<tr>
+<td>mileage</td>
+<td>Number</td>
+<td>The mileage</td>
+</tr>
+<tr>
+<td>color</td>
+<td>String</td>
+<td>The color of the car</td>
+</tr>
+<tr>
+<td>description</td>
+<td>String</td>
+<td>The description of the car</td>
+</tr>
+<tr>
+<td>doors</td>
+<td>Number</td>
+<td>The number of doors of the car</td>
+</tr>
+<tr>
+<td>ac</td>
+<td>Boolean</td>
+<td>The car ad has AC</td>
+</tr>
+<tr>
+<td>tinted_windows</td>
+<td>Boolean</td>
+<td>The car has tinted window</td>
+</tr>
+<tr>
+<td>arm_rest</td>
+<td>Boolean</td>
+<td>The car has arm rest</td>
+</tr>
+<tr>
+<td>air_bag</td>
+<td>Boolean</td>
+<td>The car has air bag</td>
+</tr>
+<tr>
+<td>fm_radio</td>
+<td>Boolean</td>
+<td>The car has fm radio</td>
+</tr>
+<tr>
+<td>dvd_player</td>
+<td>Boolean</td>
+<td>The car has dvd player</td>
+</tr>
 </tbody></table>
 
 <aside class="notice">
@@ -605,7 +933,8 @@ For a buyer to view all car AD published by any seller</p>
 </aside>
 <pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
 </span><span class="s2">"success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
-</span><span class="s2">"payload"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="s2">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"success"</span><span class="p">,</span><span class="w">
+</span><span class="s2">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
     </span><span class="s2">"owner"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
     </span><span class="s2">"​created_on"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"2019-06-06"</span><span class="p">,</span><span class="w">
@@ -615,7 +944,21 @@ For a buyer to view all car AD published by any seller</p>
     </span><span class="s2">"​manufacturer"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Toyota"</span><span class="p">,</span><span class="err">​</span><span class="w">
     </span><span class="s2">"​model"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Corolla"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"​body_type"</span><span class="w"> </span><span class="err">​</span><span class="p">:</span><span class="w"> </span><span class="s2">"car"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"published"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+    </span><span class="s2">"published"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"year"</span><span class="p">:</span><span class="w"> </span><span class="mi">2018</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"fuel_type"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Petrol"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"fuel_cap"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">2340</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"transmission_type"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Automatic"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"mileage"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">2300</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"color"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Red"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"description"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"The description of the car ad"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"doors"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"ac"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"tinted_windows"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"arm_rest"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"air_bag"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"fm_radio"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"dvd_player"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
   </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
@@ -643,7 +986,8 @@ For a buyer to view all car AD published by any seller</p>
 </aside>
 <pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
 </span><span class="s2">"success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
-</span><span class="s2">"payload"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="s2">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"success"</span><span class="p">,</span><span class="w">
+</span><span class="s2">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
     </span><span class="s2">"owner"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
     </span><span class="s2">"​created_on"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"2019-06-06"</span><span class="p">,</span><span class="w">
@@ -653,7 +997,21 @@ For a buyer to view all car AD published by any seller</p>
     </span><span class="s2">"​manufacturer"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Toyota"</span><span class="p">,</span><span class="err">​</span><span class="w">
     </span><span class="s2">"​model"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Corolla"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"​body_type"</span><span class="w"> </span><span class="err">​</span><span class="p">:</span><span class="w"> </span><span class="s2">"car"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"published"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+    </span><span class="s2">"published"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"year"</span><span class="p">:</span><span class="w"> </span><span class="mi">2018</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"fuel_type"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Petrol"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"fuel_cap"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">2340</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"transmission_type"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Automatic"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"mileage"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">2300</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"color"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Red"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"description"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"The description of the car ad"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"doors"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"ac"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"tinted_windows"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"arm_rest"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"air_bag"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"fm_radio"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"dvd_player"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
   </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
@@ -682,7 +1040,8 @@ For a buyer to view all car AD published by any seller</p>
 </aside>
 <pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
 </span><span class="s2">"success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
-</span><span class="s2">"payload"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="s2">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"success"</span><span class="p">,</span><span class="w">
+</span><span class="s2">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
     </span><span class="s2">"owner"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
     </span><span class="s2">"​created_on"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"2019-06-06"</span><span class="p">,</span><span class="w">
@@ -692,7 +1051,21 @@ For a buyer to view all car AD published by any seller</p>
     </span><span class="s2">"​manufacturer"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Toyota"</span><span class="p">,</span><span class="err">​</span><span class="w">
     </span><span class="s2">"​model"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Corolla"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"​body_type"</span><span class="w"> </span><span class="err">​</span><span class="p">:</span><span class="w"> </span><span class="s2">"car"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"published"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+    </span><span class="s2">"published"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"year"</span><span class="p">:</span><span class="w"> </span><span class="mi">2018</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"fuel_type"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Petrol"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"fuel_cap"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">2340</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"transmission_type"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Automatic"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"mileage"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">2300</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"color"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Red"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"description"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"The description of the car ad"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"doors"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"ac"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"tinted_windows"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"arm_rest"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"air_bag"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"fm_radio"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"dvd_player"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
   </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
@@ -706,7 +1079,8 @@ For a buyer to view all car AD published by any seller</p>
 </aside>
 <pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
 </span><span class="s2">"success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
-</span><span class="s2">"payload"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="s2">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"success"</span><span class="p">,</span><span class="w">
+</span><span class="s2">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
     </span><span class="s2">"owner"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
     </span><span class="s2">"​created_on"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"2019-06-06"</span><span class="p">,</span><span class="w">
@@ -716,7 +1090,21 @@ For a buyer to view all car AD published by any seller</p>
     </span><span class="s2">"​manufacturer"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Toyota"</span><span class="p">,</span><span class="err">​</span><span class="w">
     </span><span class="s2">"​model"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Corolla"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"​body_type"</span><span class="w"> </span><span class="err">​</span><span class="p">:</span><span class="w"> </span><span class="s2">"car"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"published"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+    </span><span class="s2">"published"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"year"</span><span class="p">:</span><span class="w"> </span><span class="mi">2018</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"fuel_type"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Petrol"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"fuel_cap"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">2340</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"transmission_type"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Automatic"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"mileage"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">2300</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"color"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Red"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"description"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"The description of the car ad"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"doors"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"ac"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"tinted_windows"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"arm_rest"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"air_bag"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"fm_radio"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"dvd_player"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
   </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
@@ -730,7 +1118,8 @@ For a buyer to view all car AD published by any seller</p>
 </aside>
 <pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
 </span><span class="s2">"success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
-</span><span class="s2">"payload"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="s2">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"success"</span><span class="p">,</span><span class="w">
+</span><span class="s2">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="s2">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
     </span><span class="s2">"owner"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
     </span><span class="s2">"​created_on"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"2019-06-06"</span><span class="p">,</span><span class="w">
@@ -740,7 +1129,21 @@ For a buyer to view all car AD published by any seller</p>
     </span><span class="s2">"​manufacturer"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Toyota"</span><span class="p">,</span><span class="err">​</span><span class="w">
     </span><span class="s2">"​model"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Corolla"</span><span class="p">,</span><span class="w">
     </span><span class="s2">"​body_type"</span><span class="w"> </span><span class="err">​</span><span class="p">:</span><span class="w"> </span><span class="s2">"car"</span><span class="p">,</span><span class="w">
-    </span><span class="s2">"published"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+    </span><span class="s2">"published"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"year"</span><span class="p">:</span><span class="w"> </span><span class="mi">2018</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"fuel_type"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Petrol"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"fuel_cap"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">2340</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"transmission_type"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Automatic"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"mileage"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">2300</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"color"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Red"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"description"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"The description of the car ad"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"doors"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"ac"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"tinted_windows"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"arm_rest"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"air_bag"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"fm_radio"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"dvd_player"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
   </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
@@ -754,7 +1157,8 @@ For a buyer to view all car AD published by any seller</p>
 </aside>
 <pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
 </span><span class="s2">"success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
-</span><span class="s2">"payload"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="s2">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"success"</span><span class="p">,</span><span class="w">
+</span><span class="s2">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
   </span><span class="s2">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Successfully delete car advertisement"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
