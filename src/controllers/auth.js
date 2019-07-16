@@ -20,7 +20,8 @@ const userValidationRule = () => ({
   last_name: ['required', 'min_length:3'],
   email: ['required', 'email'],
   address: ['required', 'min_length:10'],
-  password: ['required', 'min_length:6', 'compare:compare_password'],
+  password: ['required', 'min_length:6'],
+  // password: ['required', 'min_length:6', 'compare:compare_password'],
 });
 
 export const register = async (req, res) => {
