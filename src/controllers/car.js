@@ -167,6 +167,10 @@ const authorizedValidation = (carRecord, user) => {
     * return authorized message
     */
     const [car] = carRecord.rows;
+    console.group();
+    console.log(car);
+    console.log(user);
+    console.groupEnd();
     if (car.owner !== user.id && !user.is_admin) {
       return { success: false, code: 403, errMsg: 'You are not authorized to perform this action' };
     }
