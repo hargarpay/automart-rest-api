@@ -103,7 +103,7 @@ const carInputValidationRules = () => (
     manufacturer: ['required', 'min_length:2'],
     model: ['required', 'min_length:2'],
     body_type: ['required', 'min_length:2'],
-    published: ['required_if_not_empty', 'is_boolean'],
+    // published: ['required_if_not_empty', 'is_boolean'],
   }
 );
 
