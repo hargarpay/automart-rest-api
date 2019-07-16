@@ -13,7 +13,11 @@ export const getOrder = () => {};
 
 const errorOccur = (userId, car) => {
   if (isEmpty(car)) return { success: false, statusCode: 404, errMsg: 'Record not found' };
-  if (+car.owner === +userId) return { success: false, statusCode: 401, errMsg: 'Seller can not make purchase of his/her car advert' };
+  // if (+car.owner === +userId) {
+  // return {
+  //  success: false, statusCode: 401,
+  // errMsg: 'Seller can not make purchase of his/her car advert' };
+  // }
   if (!car.published) return { success: false, statusCode: 403, errMsg: 'Record not accessible' };
   return { success: true };
 };
