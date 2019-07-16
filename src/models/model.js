@@ -69,8 +69,7 @@ export default class BaseModel {
 
     const sql = stringFormat(`UPDATE public.${this.table} SET %s WHERE id=%d RETURNING ${returnCols.join(', ')}`, [columns, parseInt(id, 10)]);
     try {
-      const result = await this.execSql(sql, payload);
-      return result;
+      return await this.execSql(sql, payload);
     } catch (e) {
       throw new Error(`Error updating Data: ${e}`);
     }
@@ -85,8 +84,7 @@ export default class BaseModel {
 
     const sql = stringFormat(`UPDATE public.${this.table} SET %s WHERE %s RETURNING ${returnCols.join(', ')}`, [cols, whereClause]);
     try {
-      const result = await this.execSql(sql, payload);
-      return result;
+      return await this.execSql(sql, payload);
     } catch (e) {
       throw new Error(`Error updating Data: ${e}`);
     }
@@ -94,14 +92,20 @@ export default class BaseModel {
 
   async findAll(columns = ['*']) {
     const sql = stringFormat(`SELECT ${columns.join(', ')} FROM public.${this.table}`);
-    const result = await this.execSql(sql);
-    return result;
+    try {
+      return await this.execSql(sql);
+    } catch (e) {
+      throw new Error(`Error finding all Data: ${e}`);
+    }
   }
 
   async findById(id, columns = ['*']) {
     const sql = stringFormat(`SELECT ${columns.join(', ')} FROM public.${this.table} WHERE id=$1`);
-    const result = await this.execSql(sql, [parseInt(id, 10)]);
-    return result;
+    try {
+      return await this.execSql(sql, [parseInt(id, 10)]);
+    } catch (e) {
+      throw new Error(`Error finding data by Id: ${e}`);
+    }
   }
 
   async findByFilter(filters, columns = ['*'], single = false) {
@@ -111,9 +115,7 @@ export default class BaseModel {
 
     const sql = stringFormat(`SELECT ${columns.join(', ')} FROM public.${this.table} WHERE ${whereClause} ${limit}`);
     try {
-      const result = await this.execSql(sql, whereArray);
-
-      return result;
+      return await this.execSql(sql, whereArray);
     } catch (e) {
       throw new Error(`Error finding Data: ${e}`);
     }
@@ -122,8 +124,7 @@ export default class BaseModel {
   async removeById(id) {
     const sql = `DELETE FROM public.${this.table} WHERE id=$1`;
     try {
-      const result = await this.execSql(sql, [parseInt(id, 10)]);
-      return result;
+      return await this.execSql(sql, [parseInt(id, 10)]);
     } catch (e) {
       throw new Error(`Error deleting Data: ${e}`);
     }
@@ -133,8 +134,7 @@ export default class BaseModel {
     const { whereClause, whereArray } = prepareFilterWhere(filters);
     const sql = stringFormat(`DELETE FROM public.${this.table} WHERE %s`, [whereClause]);
     try {
-      const result = await this.execSql(sql, whereArray);
-      return result;
+      return await this.execSql(sql, whereArray);
     } catch (e) {
       throw new Error(`Error deleting Data: ${e}`);
     }
@@ -142,8 +142,7 @@ export default class BaseModel {
 
   async removeAll() {
     try {
-      const result = await this.execSql(`DELETE FROM public.${this.table}`);
-      return result;
+      return await this.execSql(`DELETE FROM public.${this.table}`);
     } catch (e) {
       throw new Error(`Error Deleting all rows: ${e}`);
     }

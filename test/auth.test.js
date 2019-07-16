@@ -42,6 +42,12 @@ describe('User Authentication API Routes', () => {
         address: 'test 1 home address',
         is_admin: true,
         password,
+        street: 'test 1 street',
+        city: 'test 1 city',
+        state: 'test 1 state',
+        country: 'Nigeria',
+        phone: '09088776655',
+        zip: '101-242',
       });
 
       await userDB.save({
@@ -51,6 +57,12 @@ describe('User Authentication API Routes', () => {
         address: 'test 2 home address',
         is_admin: false,
         password,
+        street: 'test 2 street',
+        city: 'test 2 city',
+        state: 'test 2 state',
+        country: 'Nigeria',
+        phone: '09088776644',
+        zip: '101-242',
       });
     } catch (err) {
       console.log(err);
@@ -69,6 +81,12 @@ describe('User Authentication API Routes', () => {
           address: '31, Alagba street orile',
           password: 'johnsmith',
           compare_password: 'johnsmith',
+          street: 'test 3 street',
+          city: 'test 3 city',
+          state: 'test 3 state',
+          country: 'Nigeria',
+          phone: '09088776633',
+          zip: '101-242',
         })
         .set('accept', 'json')
         .expect(201);
@@ -108,6 +126,20 @@ describe('Car advertisement API Routes', () => {
         status: 'available',
         body_type: 'truck',
         published: true,
+        year: 2000,
+        fuel_type: 'Petrol',
+        fuel_cap: 300,
+        transmission_type: 'Automatic',
+        mileage: 3400,
+        color: 'Red',
+        description: 'Other stories about the car goes here',
+        doors: 4,
+        ac: true,
+        tinted_windows: true,
+        arm_rest: false,
+        air_bag: false,
+        fm_radio: true,
+        dvd_player: false,
       });
       await carDB.save({
         owner: 3,
@@ -118,6 +150,20 @@ describe('Car advertisement API Routes', () => {
         status: 'available',
         body_type: 'car',
         published: true,
+        year: 2003,
+        fuel_type: 'Petrol',
+        fuel_cap: 2000,
+        transmission_type: 'Automatic',
+        mileage: 3400,
+        color: 'Red',
+        description: 'Other stories about the car goes here',
+        doors: 4,
+        ac: true,
+        tinted_windows: true,
+        arm_rest: false,
+        air_bag: false,
+        fm_radio: true,
+        dvd_player: false,
       });
       await carDB.save({
         owner: 3,
@@ -128,6 +174,20 @@ describe('Car advertisement API Routes', () => {
         status: 'available',
         body_type: 'car',
         published: false,
+        year: 2003,
+        fuel_type: 'Petrol',
+        fuel_cap: 2000,
+        transmission_type: 'Automatic',
+        mileage: 3400,
+        color: 'Red',
+        description: 'Other stories about the car goes here',
+        doors: 6,
+        ac: true,
+        tinted_windows: true,
+        arm_rest: false,
+        air_bag: false,
+        fm_radio: true,
+        dvd_player: false,
       });
       await carDB.save({
         owner: 2,
@@ -138,6 +198,20 @@ describe('Car advertisement API Routes', () => {
         status: 'sold',
         body_type: 'truck',
         published: true,
+        year: 2005,
+        fuel_type: 'Petrol',
+        fuel_cap: 2000,
+        transmission_type: 'Automatic',
+        mileage: 3400,
+        color: 'Red',
+        description: 'Other stories about the car goes here',
+        doors: 6,
+        ac: true,
+        tinted_windows: true,
+        arm_rest: false,
+        air_bag: false,
+        fm_radio: true,
+        dvd_player: false,
       });
     } catch (err) {
       console.log(err);
@@ -175,6 +249,20 @@ describe('Car advertisement API Routes', () => {
           state: 'new',
           body_type: 'car',
           published: false,
+          year: 2003,
+          fuel_type: 'Petrol',
+          fuel_cap: 2010,
+          transmission_type: 'Manual',
+          mileage: 3400,
+          color: 'Black',
+          description: 'Other stories about the car goes here',
+          doors: 6,
+          ac: true,
+          tinted_windows: true,
+          arm_rest: false,
+          air_bag: false,
+          fm_radio: true,
+          dvd_player: false,
         })
         .set('Authorization', `Bearer ${sellerToken}`)
         .set('accept', 'json')
@@ -678,6 +766,32 @@ describe('Flag car advertisement API', () => {
 
       const { success, data } = res.body;
       assert.deepStrictEqual([true, 'object'], [success, typeof data]);
+    });
+  });
+
+  describe('POST /users/test1@automart.com/reset_password', () => {
+    it('Reset Password', async () => {
+      const res = await request.post('/api/v1/users/test1@automart.com/reset_password')
+        .set('accept', 'json')
+        .expect(200);
+
+      const { success, data } = res.body;
+      assert.deepStrictEqual([true, 'string'], [success, typeof data]);
+    });
+  });
+
+  describe('POST /users/test2@automart.com/reset_password', () => {
+    it('Reset Password', async () => {
+      const res = await request.post('/api/v1/users/test2@automart.com/reset_password')
+        .send({
+          password: 'testing',
+          new_password: 'testings',
+        })
+        .set('accept', 'json')
+        .expect(200);
+
+      const { success, data } = res.body;
+      assert.deepStrictEqual([true, 'string'], [success, typeof data]);
     });
   });
 });

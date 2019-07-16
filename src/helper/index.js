@@ -104,16 +104,21 @@ export const prepareFilterWhere = (filters, counter = 1) => {
 export const expectObj = (obj, expected, unwanted = []) => {
   const arr = [];
   const accepted = { ...obj };
+  const newUnwanted = ['token', 'Authorization'].concat(unwanted);
+  const newExpected = ['token', 'Authorization'].concat(expected);
+
+  newExpected.push('token');
+  newExpected.push('Authorization');
   Object.keys(obj).forEach((key) => {
-    if (!expected.includes(key)) {
+    if (!newExpected.includes(key)) {
       arr.push(key);
-    } else if (unwanted.includes(key)) {
+    } else if (newUnwanted.includes(key)) {
       delete accepted[key];
     }
   });
   const status = arr.length > 0;
   const message = arr.length > 0
-    ? `Only ${expected.join(', ')} are allow, ${arr.join(', ')} ${arr.length === 1 ? 'is' : 'are'} not allowed`
+    ? `Only ${newExpected.join(', ')} are allow, ${arr.join(', ')} ${arr.length === 1 ? 'is' : 'are'} not allowed`
     : '';
   return { status, message, accepted };
 };
@@ -133,4 +138,22 @@ export const responseData = (res, success, code, data) => {
     success,
     [dataKey]: data,
   });
+};
+
+export const throwError = (code, msg) => {
+  // eslint-disable-next-line no-throw-literal
+  throw ({ success: false, code, msg });
+};
+
+export const getResponseData = (e, serverDubug, serverError) => {
+  const success = false; let statusCode; let errorMsg;
+  if (typeof e === 'object') {
+    statusCode = e.code;
+    errorMsg = e.msg;
+  } else {
+    serverDubug(e);
+    statusCode = 500;
+    errorMsg = serverError;
+  }
+  return { success, code: statusCode, msg: errorMsg };
 };

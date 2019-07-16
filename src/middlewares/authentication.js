@@ -10,7 +10,7 @@ const jwtSalt = process.env.SECRET_KEY || 'test';
 
 export const verifyToken = (req, res, next) => {
   // const authorization = req.headers.Authorization;
-  const authorization = req.get('authorization');
+  const authorization = req.get('authorization') || req.body.token;
 
   //   middlewareDebug(authorization);
   if (!/^Bearer\s+/.test(authorization)) return responseData(res, false, 403, 'Not authorized');

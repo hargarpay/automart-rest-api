@@ -1,8 +1,10 @@
 import debug from 'debug';
 // import * as db from '../database/utilities/db-methods';
-import { isEmpty, responseData, expectObj } from '../helper';
+import {
+  isEmpty, responseData, expectObj, throwError, getResponseData,
+} from '../helper';
 import BaseModel from '../models/model';
-import Validator from '../middlewares/validation';
+import { makeValidation } from '../helper/validation';
 
 const carDebug = debug('automart:car');
 // const table = 'cars';
@@ -94,77 +96,66 @@ export const getCarsByAdmin = async (req, res) => {
   return responseData(res, success, code, payload);
 };
 
-export const create = async (req, res) => {
-  // Get body parameter from req
-  const { body, user } = req;
-  // List accepted feilds
-  const fillable = ['state', 'manufacturer', 'price', 'model', 'body_type', 'published'];
-  /*
-   * Check if all feilds are allowed
-   * Remove fields that are not for database but allowed
-  */
-  const { status, message, accepted } = (expectObj(body, fillable));
-  if (status) {
-    // if there are invalid fields return error with feilds allowed
-    return responseData(res, false, 422, message);
-  }
-
-  // Set Validation rule
-  const rules = {
+const carInputValidationRules = () => (
+  {
     state: ['required', 'enum:new,used'],
     price: ['required', 'is_number'],
     manufacturer: ['required', 'min_length:2'],
     model: ['required', 'min_length:2'],
     body_type: ['required', 'min_length:2'],
-    published: ['required_if_not_empty', 'is_boolean'],
-  };
+    // published: ['required_if_not_empty', 'is_boolean'],
+  }
+);
 
+const carExistFilterConfig = (accepted, user) => ({
+  manufacturer: {
+    column: 'manufacturer', operator: '=', value: accepted.manufacturer, logic: 'AND',
+  },
+  model: {
+    column: 'model', operator: '=', value: accepted.model, logic: 'AND',
+  },
+  body_type: {
+    column: 'body_type', operator: '=', value: accepted.body_type, logic: 'AND',
+  },
+  owner: {
+    column: 'owner', operator: '=', value: user.id, logic: '',
+  },
+});
+
+const carDataForDB = (accepted, user) => (
+  { ...accepted, ...{ status: 'available' }, ...{ owner: `${user.id}` } }
+);
+
+const carFillableField = () => ([
+  'state', 'manufacturer', 'price', 'model', 'body_type', 'published', 'status',
+  'year', 'fuel_type', 'fuel_cap', 'transmission_type', 'mileage', 'color',
+  'description', 'doors', 'ac', 'tinted_windows', 'arm_rest', 'air_bag', 'fm_radio', 'dvd_player',
+  'img_url',
+]);
+
+export const create = async (req, res) => {
+  // Get body parameter from req
+  const { body, user } = req;
+  // List accepted feilds
+  // Check if all feilds are allowed, Remove fields that are not for database but allowed
+  const { status, message, accepted } = (expectObj(body, carFillableField()));
+
+  if (status) return responseData(res, false, 422, message);
   // Check Validation
   const db = new BaseModel('cars');
   try {
-    const validate = new Validator();
-    validate.make(body, rules);
-    // If validation passes
-    if (validate.passes()) {
-      // Check if the data has been save in in database before
-      const record = await db.findByFilter({
-        manufacturer: {
-          column: 'manufacturer', operator: '=', value: accepted.manufacturer, logic: 'AND',
-        },
-        model: {
-          column: 'model', operator: '=', value: accepted.model, logic: 'AND',
-        },
-        body_type: {
-          column: 'body_type', operator: '=', value: accepted.body_type, logic: 'AND',
-        },
-        owner: {
-          column: 'owner', operator: '=', value: user.id, logic: '',
-        },
-      });
-      if (record.rows.length > 0) {
-        return responseData(res, false, 422, `Car with ${accepted.model} model, ${accepted.manufacturer} manufacturer, ${accepted.body_type} body type and has already been created by seller`);
-      }
-      // Added the owner id to the accepted data for database
-      const payload = {
-        ...accepted,
-        ...{ status: 'available' },
-        ...{ owner: `${user.id}` },
-      };
-        // Store data to database and get the ID
-      const car = await db.save(payload, ['state', 'price', 'manufacturer', 'model', 'body_type', 'status', 'owner']);
-      // return successful response
-      return responseData(res, true, 201, car);
-    }
-
-    // return invalid message
-    return responseData(res, false, 422, validate.getFirstError());
+    makeValidation(body, carInputValidationRules());
+    // Check if the data has been save in in database before
+    const record = await db.findByFilter(carExistFilterConfig(accepted, user));
+    if (record.rows.length > 0) throwError(422, `Car with ${accepted.model} model, ${accepted.manufacturer} manufacturer, ${accepted.body_type} body type and has already been created by seller`);
+    // Store data to database and get the ID
+    const returnCarProps = carFillableField().concat(['owner']);
+    const car = await db.save(carDataForDB(accepted, user), returnCarProps);
+    return responseData(res, true, 201, car);
   } catch (error) {
-    carDebug(error);
-    // return error message if something is wrong
-    return responseData(res, false, 500, 'Error creating car');
-  } finally {
-    await db.db.end();
-  }
+    const { success, code, msg } = getResponseData(error, carDebug, 'Error creating car');
+    return responseData(res, success, code, msg);
+  } finally { await db.db.end(); }
 };
 
 const authorizedValidation = (carRecord, user) => {
@@ -203,29 +194,25 @@ const updateField = async (req, options) => {
 
   const db = new BaseModel('cars');
   try {
-  // Check the data with the validation rule
-    const validate = new Validator();
-    validate.make(body, rules);
-    // if validation passes
-    if (validate.passes()) {
-      // Check if the car id exist
-      const carRecord = await db.findById(carId);
-      // If user is authorized
-      const { success, code, errMsg } = authorizedValidation(carRecord, user);
-      if (!success) return { success, code, payload: errMsg };
-      // Update data by Id
-      const { rows } = await db.updateById(accepted, carId, ['state', 'manufacturer', 'price', 'model', 'body_type', 'status', 'owner']);
-      const [updateCar] = rows;
+    makeValidation(body, rules);
+    // Check if the car id exist
+    const carRecord = await db.findById(carId);
+    // If user is authorized
+    const { success, code, errMsg } = authorizedValidation(carRecord, user);
+    if (!success) throwError(code, errMsg);
+    // Update data by Id
+    const returnCarProps = carFillableField().concat(['owner']);
+    const { rows } = await db.updateById(accepted, carId, returnCarProps);
+    const [updateCar] = rows;
 
-      // Update the data and response with successful message
-      return { success: true, code: 200, payload: updateCar };
-    }
+    // Update the data and response with successful message
+    return { success: true, code: 200, payload: updateCar };
+    // }
     // If validation fails return with validation error message
-    return { success: false, code: 422, payload: validate.getFirstError() };
+    // return { success: false, code: 422, payload: validate.getFirstError() };
   } catch (error) {
-    // Error with database processing
-    carDebug(error);
-    return { success: false, code: 500, payload: errorMessage };
+    const { success, code, msg } = getResponseData(error, carDebug, errorMessage);
+    return { success, code, payload: msg };
   } finally {
     await db.db.end();
   }
@@ -233,7 +220,7 @@ const updateField = async (req, options) => {
 
 export const update = async (req, res) => {
   // List of fields allowed
-  const fillable = ['state', 'manufacturer', 'price', 'model', 'body_type'];
+  const fillable = carFillableField();
   // Set Validation Rules
   const rules = {
     state: ['required', 'enum:new,used'],
@@ -316,8 +303,9 @@ export const remove = async (req, res) => {
     const { success, code, errMsg } = authorizedValidation(carRecord, user);
     if (!success) return responseData(res, success, code, errMsg);
 
-    const result = await db.removeById(carId);
-    carDebug(result);
+    await db.execSql('DELETE FROM public.orders WHERE car_id = $1', [parseInt(carId, 10)]);
+    await db.execSql('DELETE FROM public.flags WHERE car_id = $1', [parseInt(carId, 10)]);
+    await db.removeById(carId);
     return responseData(res, true, 200, 'Car Ad successfully deleted');
   } catch (err) {
     carDebug(err);

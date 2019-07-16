@@ -40,7 +40,7 @@ export default class Validator {
         break;
       case 'max_length':
         status = invalidMaxLength(data[key], parseInt(paramters[0], 10));
-        message = `The ${key} field must not be less than ${paramters[0]}`;
+        message = `The ${key} field must not be greater than ${paramters[0]}`;
         break;
       case 'email':
         status = invalidEmail(data[key]);

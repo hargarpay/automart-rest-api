@@ -1,6 +1,7 @@
 
 # Enviroment Variable
 .env
+secret_vars.txt
 
 # Remove package lock file
 package-lock.json
