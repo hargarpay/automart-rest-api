@@ -123,6 +123,12 @@ export default class BaseModel {
 
   async removeById(id) {
     const sql = `DELETE FROM public.${this.table} WHERE id=$1`;
+    if (this.table === 'cars') {
+      console.group('Car Delete');
+      console.log(sql);
+      console.log(id);
+      console.groupEnd();
+    }
     try {
       return await this.execSql(sql, [parseInt(id, 10)]);
     } catch (e) {
