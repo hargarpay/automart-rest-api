@@ -101,21 +101,24 @@ export const prepareFilterWhere = (filters, counter = 1) => {
   return { whereClause, whereArray };
 };
 
-export const expectObj = (obj, expected, unwanted = ['token', 'Authorization']) => {
+export const expectObj = (obj, expected, unwanted = []) => {
   const arr = [];
   const accepted = { ...obj };
-  expected.push('token');
-  expected.push('Authorization');
+  const newUnwanted = ['token', 'Authorization'].concat(unwanted);
+  const newExpected = ['token', 'Authorization'].concat(expected);
+
+  newExpected.push('token');
+  newExpected.push('Authorization');
   Object.keys(obj).forEach((key) => {
-    if (!expected.includes(key)) {
+    if (!newExpected.includes(key)) {
       arr.push(key);
-    } else if (unwanted.includes(key)) {
+    } else if (newUnwanted.includes(key)) {
       delete accepted[key];
     }
   });
   const status = arr.length > 0;
   const message = arr.length > 0
-    ? `Only ${expected.join(', ')} are allow, ${arr.join(', ')} ${arr.length === 1 ? 'is' : 'are'} not allowed`
+    ? `Only ${newExpected.join(', ')} are allow, ${arr.join(', ')} ${arr.length === 1 ? 'is' : 'are'} not allowed`
     : '';
   return { status, message, accepted };
 };
