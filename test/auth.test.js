@@ -42,6 +42,12 @@ describe('User Authentication API Routes', () => {
         address: 'test 1 home address',
         is_admin: true,
         password,
+        street: 'test 1 street',
+        city: 'test 1 city',
+        state: 'test 1 state',
+        country: 'Nigeria',
+        phone: '09088776655',
+        zip: '101-242',
       });
 
       await userDB.save({
@@ -51,6 +57,12 @@ describe('User Authentication API Routes', () => {
         address: 'test 2 home address',
         is_admin: false,
         password,
+        street: 'test 2 street',
+        city: 'test 2 city',
+        state: 'test 2 state',
+        country: 'Nigeria',
+        phone: '09088776644',
+        zip: '101-242',
       });
     } catch (err) {
       console.log(err);
@@ -69,6 +81,12 @@ describe('User Authentication API Routes', () => {
           address: '31, Alagba street orile',
           password: 'johnsmith',
           compare_password: 'johnsmith',
+          street: 'test 3 street',
+          city: 'test 3 city',
+          state: 'test 3 state',
+          country: 'Nigeria',
+          phone: '09088776633',
+          zip: '101-242',
         })
         .set('accept', 'json')
         .expect(201);

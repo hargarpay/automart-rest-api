@@ -21,6 +21,7 @@ const userValidationRule = () => ({
   email: ['required', 'email'],
   address: ['required', 'min_length:10'],
   password: ['required', 'min_length:6'],
+  phone: ['required'],
   // password: ['required', 'min_length:6', 'compare:compare_password'],
 });
 
@@ -28,9 +29,11 @@ export const register = async (req, res) => {
   // Get the body data from req
   const { body } = req;
 
-  console.log(body);
   // Allowed fields to be posted
-  const fillable = ['first_name', 'last_name', 'email', 'address', 'password', 'compare_password'];
+  const fillable = [
+    'first_name', 'last_name', 'email', 'address', 'password',
+    'compare_password', 'street', 'city', 'state', 'country', 'phone', 'zip', 'is_admin',
+  ];
 
   const { status, message, accepted } = (expectObj(body, fillable, ['compare_password']));
   if (status) return responseData(res, false, 422, message);
@@ -51,7 +54,10 @@ export const register = async (req, res) => {
     const payload = { ...accepted, ...{ password: hashPassword, is_admin: false } };
 
     // Save data
-    const user = await db.save(payload, ['first_name', 'last_name', 'email', 'is_admin', 'address']);
+    const user = await db.save(payload, [
+      'first_name', 'last_name', 'email', 'is_admin', 'address',
+      'street', 'city', 'state', 'country', 'phone', 'zip',
+    ]);
 
     // Generate token
     const token = jwt.sign({ user }, jwtSalt, { expiresIn: 43200 });
