@@ -101,9 +101,10 @@ export const prepareFilterWhere = (filters, counter = 1) => {
   return { whereClause, whereArray };
 };
 
-export const expectObj = (obj, expected, unwanted = []) => {
+export const expectObj = (obj, expected, unwanted = ['token']) => {
   const arr = [];
   const accepted = { ...obj };
+  expected.push('token');
   Object.keys(obj).forEach((key) => {
     if (!expected.includes(key)) {
       arr.push(key);
