@@ -61,6 +61,9 @@ const carValidationRules = () => ({
 export const create = async (req, res) => {
   // Get user and body from req Object
   const { user, body } = req;
+  console.group('Order Fields');
+  console.log(body);
+  console.groupEnd();
   const fillable = ['car_id', 'price'];
   const { status, message, accepted } = expectObj(body, fillable);
   if (status) return responseData(res, false, 422, message);
