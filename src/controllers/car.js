@@ -139,7 +139,7 @@ export const create = async (req, res) => {
   // List accepted feilds
   // Check if all feilds are allowed, Remove fields that are not for database but allowed
   const { status, message, accepted } = (expectObj(body, carFillableField()));
-  console.log(message);
+  console.log(status);
   if (status) return responseData(res, false, 422, message);
   // Check Validation
   const db = new BaseModel('cars');
@@ -155,7 +155,7 @@ export const create = async (req, res) => {
     return responseData(res, true, 201, car);
   } catch (error) {
     const { success, code, msg } = getResponseData(error, carDebug, 'Error creating car');
-    console.log(msg);
+    console.log(mcodesg);
     return responseData(res, success, code, msg);
   } finally { await db.db.end(); }
 };
