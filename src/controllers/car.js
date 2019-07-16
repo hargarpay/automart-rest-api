@@ -126,14 +126,18 @@ const carDataForDB = (accepted, user) => (
   { ...accepted, ...{ status: 'available' }, ...{ owner: `${user.id}` } }
 );
 
+const carFillableField = () => ([
+  'state', 'manufacturer', 'price', 'model', 'body_type', 'published',
+  'year', 'fuel_type', 'fuel_cap', 'transmission_type', 'mileage', 'color',
+  'description', 'doors', 'ac', 'tinted_windows', 'arm_rest', 'air_bag', 'fm_radio', 'dvd_player',
+]);
+
 export const create = async (req, res) => {
   // Get body parameter from req
   const { body, user } = req;
   // List accepted feilds
-  console.log(body);
-  const fillable = ['state', 'manufacturer', 'price', 'model', 'body_type', 'published'];
   // Check if all feilds are allowed, Remove fields that are not for database but allowed
-  const { status, message, accepted } = (expectObj(body, fillable));
+  const { status, message, accepted } = (expectObj(body, carFillableField()));
   if (status) return responseData(res, false, 422, message);
   // Check Validation
   const db = new BaseModel('cars');
@@ -143,7 +147,8 @@ export const create = async (req, res) => {
     const record = await db.findByFilter(carExistFilterConfig(accepted, user));
     if (record.rows.length > 0) throwError(422, `Car with ${accepted.model} model, ${accepted.manufacturer} manufacturer, ${accepted.body_type} body type and has already been created by seller`);
     // Store data to database and get the ID
-    const car = await db.save(carDataForDB(accepted, user), ['state', 'price', 'manufacturer', 'model', 'body_type', 'status', 'owner']);
+    const returnCarProps = carFillableField().concat(['owner']);
+    const car = await db.save(carDataForDB(accepted, user), returnCarProps);
     return responseData(res, true, 201, car);
   } catch (error) {
     const { success, code, msg } = getResponseData(error, carDebug, 'Error creating car');
@@ -194,7 +199,8 @@ const updateField = async (req, options) => {
     const { success, code, errMsg } = authorizedValidation(carRecord, user);
     if (!success) throwError(code, errMsg);
     // Update data by Id
-    const { rows } = await db.updateById(accepted, carId, ['state', 'manufacturer', 'price', 'model', 'body_type', 'status', 'owner']);
+    const returnCarProps = carFillableField().concat(['owner']);
+    const { rows } = await db.updateById(accepted, carId, returnCarProps);
     const [updateCar] = rows;
 
     // Update the data and response with successful message
@@ -212,7 +218,7 @@ const updateField = async (req, options) => {
 
 export const update = async (req, res) => {
   // List of fields allowed
-  const fillable = ['state', 'manufacturer', 'price', 'model', 'body_type'];
+  const fillable = carFillableField();
   // Set Validation Rules
   const rules = {
     state: ['required', 'enum:new,used'],
