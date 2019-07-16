@@ -124,7 +124,7 @@ export default class BaseModel {
   async removeById(id) {
     const sql = `DELETE FROM public.${this.table} WHERE id=$1`;
     try {
-      return this.execSql(sql, [parseInt(id, 10)]);
+      return await this.execSql(sql, [parseInt(id, 10)]);
     } catch (e) {
       throw new Error(`Error deleting Data: ${e}`);
     }
