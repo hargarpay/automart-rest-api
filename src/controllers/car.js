@@ -155,7 +155,7 @@ export const create = async (req, res) => {
     return responseData(res, true, 201, car);
   } catch (error) {
     const { success, code, msg } = getResponseData(error, carDebug, 'Error creating car');
-    console.log(mcodesg);
+    console.log(code);
     return responseData(res, success, code, msg);
   } finally { await db.db.end(); }
 };
