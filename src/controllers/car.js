@@ -135,6 +135,7 @@ const carFillableField = () => ([
 export const create = async (req, res) => {
   // Get body parameter from req
   const { body, user } = req;
+  console.log(body);
   // List accepted feilds
   // Check if all feilds are allowed, Remove fields that are not for database but allowed
   const { status, message, accepted } = (expectObj(body, carFillableField()));
