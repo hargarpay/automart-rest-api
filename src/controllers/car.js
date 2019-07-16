@@ -127,9 +127,10 @@ const carDataForDB = (accepted, user) => (
 );
 
 const carFillableField = () => ([
-  'state', 'manufacturer', 'price', 'model', 'body_type', 'published',
+  'state', 'manufacturer', 'price', 'model', 'body_type', 'published', 'status',
   'year', 'fuel_type', 'fuel_cap', 'transmission_type', 'mileage', 'color',
   'description', 'doors', 'ac', 'tinted_windows', 'arm_rest', 'air_bag', 'fm_radio', 'dvd_player',
+  'img_url',
 ]);
 
 export const create = async (req, res) => {
