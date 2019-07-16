@@ -676,21 +676,23 @@ describe('Make Purchase Order API', () => {
     });
   });
 
-  describe('POST /order', () => {
-    it('Buyer make purchase order of car advert he/she has made before while it is pending', async () => {
-      const res = await request.post('/api/v1/order')
-        .send({
-          price: 75000,
-          car_id: 1,
-        })
-        .set('Authorization', `Bearer ${buyerToken}`)
-        .set('accept', 'json')
-        .expect(422);
+  // describe('POST /order', () => {
+  //   it(
+  // 'Buyer make purchase order of car advert he/she has made before while it is pending',
+  //  async () => {
+  //     const res = await request.post('/api/v1/order')
+  //       .send({
+  //         price: 75000,
+  //         car_id: 1,
+  //       })
+  //       .set('Authorization', `Bearer ${buyerToken}`)
+  //       .set('accept', 'json')
+  //       .expect(422);
 
-      const { success, error } = res.body;
-      assert.deepStrictEqual([false, 'string'], [success, typeof error]);
-    });
-  });
+  //     const { success, error } = res.body;
+  //     assert.deepStrictEqual([false, 'string'], [success, typeof error]);
+  //   });
+  // });
 
   describe('POST /order', () => {
     it('Seller cannot make other of the car advert he or she created', async () => {
