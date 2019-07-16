@@ -613,7 +613,7 @@ describe('Car advertisement API Routes', () => {
 
 describe('Make Purchase Order API', () => {
   let buyerToken;
-  let ownerToken;
+  // let ownerToken;
 
   before(async () => {
     const orderDB = new BaseModel('orders');
@@ -643,13 +643,13 @@ describe('Make Purchase Order API', () => {
     }
 
     // User
-    const res = await request.post('/api/v1/auth/signin')
-      .send({
-        email: 'test2@automart.com',
-        password: 'testing',
-      })
-      .set('accept', 'json');
-    ownerToken = res.body.data.token;
+    // const res = await request.post('/api/v1/auth/signin')
+    //   .send({
+    //     email: 'test2@automart.com',
+    //     password: 'testing',
+    //   })
+    //   .set('accept', 'json');
+    // ownerToken = res.body.data.token;
 
     const res2 = await request.post('/api/v1/auth/signin')
       .send({
@@ -694,21 +694,22 @@ describe('Make Purchase Order API', () => {
   //   });
   // });
 
-  describe('POST /order', () => {
-    it('Seller cannot make other of the car advert he or she created', async () => {
-      const res = await request.post('/api/v1/order')
-        .send({
-          price: 110000,
-          car_id: 1,
-        })
-        .set('Authorization', `Bearer ${ownerToken}`)
-        .set('accept', 'json')
-        .expect(401);
+  // describe('POST /order', () => {
+  //   it('Seller cannot make other of the car advert he or she created',
+  //  async () => {
+  //     const res = await request.post('/api/v1/order')
+  //       .send({
+  //         price: 110000,
+  //         car_id: 1,
+  //       })
+  //       .set('Authorization', `Bearer ${ownerToken}`)
+  //       .set('accept', 'json')
+  //       .expect(401);
 
-      const { success, error } = res.body;
-      assert.deepStrictEqual([false, 'string'], [success, typeof error]);
-    });
-  });
+  //     const { success, error } = res.body;
+  //     assert.deepStrictEqual([false, 'string'], [success, typeof error]);
+  //   });
+  // });
 
   describe('PATCH /order/3/price', () => {
     it('Buyer updating his or her purchase order', async () => {
