@@ -303,8 +303,9 @@ export const remove = async (req, res) => {
     const { success, code, errMsg } = authorizedValidation(carRecord, user);
     if (!success) return responseData(res, success, code, errMsg);
 
-    const result = await db.removeById(carId);
-    carDebug(result);
+    await db.execSql('DELETE FROM public.orders WHERE car_id = $1', [parseInt(carId, 10)]);
+    await db.execSql('DELETE FROM public.flags WHERE car_id = $1', [parseInt(carId, 10)]);
+    await db.removeById(carId);
     return responseData(res, true, 200, 'Car Ad successfully deleted');
   } catch (err) {
     carDebug(err);
