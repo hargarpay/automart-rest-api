@@ -27,6 +27,8 @@ const userValidationRule = () => ({
 export const register = async (req, res) => {
   // Get the body data from req
   const { body } = req;
+
+  console.log(body);
   // Allowed fields to be posted
   const fillable = ['first_name', 'last_name', 'email', 'address', 'password', 'compare_password'];
 
