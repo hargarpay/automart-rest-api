@@ -50,13 +50,15 @@ const carExistFilterConfig = (accepted, user) => (
 
 const carDataForDB = (accepted, user, body) => {
   const priceOrder = body.price || body.amount;
+
   return ({
-    ...accepted,
-    ...{ status: 'pending' },
-    ...{ buyer: user.id },
-    ...{ price_offered: priceOrder },
-    ...{ new_price_offered: priceOrder },
-    ...{ old_price_offered: 0 },
+    car_id: accepted.car_id,
+    price: priceOrder,
+    status: 'pending',
+    buyer: user.id,
+    price_offered: priceOrder,
+    new_price_offered: priceOrder,
+    old_price_offered: 0,
   });
 };
 
@@ -93,10 +95,10 @@ export const create = async (req, res) => {
 };
 
 
-const carUpdatePriceForDB = (accepted, body, order) => {
-  const mainPrice = body.amount || body.price;
+const carUpdatePriceForDB = (accepted, order) => {
+  const mainPrice = accepted.amount || accepted.price;
   return ({
-    ...accepted,
+    price: mainPrice,
     price_offered: mainPrice,
     old_price_offered: order.price_offered,
     new_price_offered: mainPrice,
@@ -136,7 +138,7 @@ export const updatePrice = async (req, res) => {
 
     updatePriceError(rows, order, user);
 
-    const orderRecord = await db.updateById(carUpdatePriceForDB(accepted, body, order), orderId, ['status', 'car_id', 'buyer', 'price', 'price_offered', 'new_price_offered', 'old_price_offered']);
+    const orderRecord = await db.updateById(carUpdatePriceForDB(accepted, order), orderId, ['status', 'car_id', 'buyer', 'price', 'price_offered', 'new_price_offered', 'old_price_offered']);
     const [updateOrder] = orderRecord.rows;
     return responseData(res, true, 200, updateOrder);
   } catch (err) {
