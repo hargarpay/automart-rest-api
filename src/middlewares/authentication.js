@@ -24,7 +24,7 @@ export const verifyToken = (req, res, next) => {
 };
 
 
-export const verifyAdmin = async (req, res, next) => {
+export const verifyAdmin = (req, res, next) => {
   const { user } = req;
   /**
    * If user is empty or user is not admin
@@ -66,9 +66,9 @@ export const verifySeller = async (req, res, next) => {
   return user.is_admin === true ? next() : responseData(res, false, 403, 'Car advert not allowed to be viewed');
 };
 
-export const localPrefix = async (req, res, next) => {
+export const localPrefix = (req, res, next) => {
   const { user } = req;
-  req.userImageTag = [user.username, 'admin'];
+  req.userImageTag = [`seller${user.id}`, 'admin'];
   req.isAdmin = user.is_admin;
   next();
 };
