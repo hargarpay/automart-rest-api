@@ -2,6 +2,8 @@ import debug from 'debug';
 import fs from 'fs';
 import path from 'path';
 import cloudinary from 'cloudinary';
+import { expectObj, responseData } from '../helper';
+import Validator from '../middlewares/validation';
 
 // Set Cloudinary configuariotn file
 cloudinary.config({
@@ -14,16 +16,16 @@ const cloudinaryV2 = cloudinary.v2;
 
 const mediaDebug = debug('automart:media');
 
-export const localUplaod = (res, buff, filepath, extension) => {
-  fs.writeFile(`${filepath}.${extension}`, buff.toString(), 'base64', (err) => {
-    if (err) return res.status(401).json({ success: false, message: 'Error uploading file' });
-    return fs.unlink(`${filepath}.txt`, (er) => {
-      if (er) return res.status(404).json({ success: false, message: 'Error Delete text file' });
-      return res.status(200).json({ success: true, message: 'File Uplaeded successfully' });
-      // file removed
-    });
-  });
-};
+// export const localUplaod = (res, buff, filepath, extension) => {
+//   fs.writeFile(`${filepath}.${extension}`, buff.toString(), 'base64', (err) => {
+//     if (err) return responseData(res, false, 401, 'Error uploading file');
+//     return fs.unlink(`${filepath}.txt`, (er) => {
+//       if (er) return responseData(res, false, 404, 'Error Delete text file');
+//       return responseData(res, true, 200, 'File Uplaeded successfully');
+//       // file removed
+//     });
+//   });
+// };
 
 export const cloudinaryUpload = (req, res, base64Data, filepath) => {
   const filename = filepath.split('/').pop().toLowerCase();
@@ -37,11 +39,11 @@ export const cloudinaryUpload = (req, res, base64Data, filepath) => {
     },
     (error, result) => {
       mediaDebug(result, error);
-      if (error) return res.status(404).json({ success: false, message: 'Unable to upload file to cloudinary' });
+      if (error) return responseData(res, 401, false, 'Unable to upload file to cloudinary');
       //   mediaDebug(result.url.replace(/v[0-9]+\//, ''));
       return fs.unlink(`${filepath}.txt`, (er) => {
-        if (er) return res.status(404).json({ success: false, message: 'Error Delete text file' });
-        return res.status(200).json({ success: true, message: 'Uploading to cloudify' });
+        if (er) responseData(res, false, 401, 'Error Delete text file');
+        return responseData(res, true, 200, 'Uploading to cloudify');
       });
     });
 };
@@ -50,7 +52,7 @@ export const convertText2Image = (req, res, filepath, extension) => {
   // Allocate memory to Buffer
   let buff = Buffer.alloc(0);
   // start a read stream for a test.txt file
-  fs.createReadStream(`${filepath}.txt`)
+  return fs.createReadStream(`${filepath}.txt`)
     .on('data', (chunk) => {
       // concatenate buff, and chunk both of which are buffers
       buff = Buffer.concat([buff, chunk], buff.length + chunk.length);
@@ -59,9 +61,21 @@ export const convertText2Image = (req, res, filepath, extension) => {
 };
 
 export const media = (req, res) => {
+  const { body } = req;
+  const fillable = ['filename', 'fileData', 'start', 'uploading', 'extension'];
+
+  const { status, message, accepted } = expectObj(body, fillable);
+
+  if (status) return responseData(res, false, 422, message);
+
+  const validate = new Validator();
+  validate.make(body, { extension: ['required', 'enum:jpeg,jpg,png'] });
+
+  if (validate.fails()) return responseData(res, false, 422, validate.getFirstError());
+
   const {
     filename, fileData, start, uploading, extension,
-  } = req.body;
+  } = accepted;
   const filepath = path.join(__dirname, '../../assets', filename);
   const splitData = fileData.split('base64,');
   const mode = start === 0 ? 'w' : 'a';
@@ -73,10 +87,7 @@ export const media = (req, res) => {
     return convertText2Image(req, res, filepath, extension);
   }
   //   Send Out data
-  return res.status(200).json({
-    success: true,
-    message: 'Successfully uploaded',
-  });
+  return responseData(res, true, 200, 'Successfully uploaded');
 };
 
 export const getImages = (req, res) => {
@@ -88,7 +99,7 @@ export const getImages = (req, res) => {
       tags: true,
       max_results: 50,
     }, (error, result) => {
-      if (error) return res.status(500).json({ success: false, message: 'Error fetching Images' });
-      return res.status(200).json({ success: true, payload: result });
+      if (error) return responseData(res, false, 500, 'Error fetching Images');
+      return responseData(res, true, 200, result);
     });
 };
