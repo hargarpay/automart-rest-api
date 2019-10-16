@@ -9,5 +9,5 @@ To start the server, follow the steps below
 
 ### [API DOCUMENTATION](https://young-ridge-93118.herokuapp.com)
 
-You can vist the [api documentation](https://young-ridge-93118.herokuapp.com) to read more about the route
+You can vist the [api documentation](https://young-ridge-93118.herokuapp.com) to read more about the route rest api
 
