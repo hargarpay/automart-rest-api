@@ -1,0 +1,25 @@
+
+# Enviroment Variable
+.env
+secret_vars.txt
+
+# Remove package lock file
+package-lock.json
+
+# Remove VS Code environment set up
+.vscode
+
+# Remove Node Modules
+node_modules
+
+# Remove all files from database/data but push the data folder
+# Since the file system database will use it
+src/database/**/*.json
+
+# Hide NYC Output
+.nyc_output
+
+# Build 
+build
+dist
+!src/build
